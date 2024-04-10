@@ -1,0 +1,367 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>编写你的第一个 Sysbench Lua Script - C4H</title><meta name=Description content="code for happy"><meta property="og:title" content="编写你的第一个 Sysbench Lua Script"><meta property="og:description" content="零、sysbench 介绍Sysbench 是一个开源的多线程性能测试工具。它提供了一系列的测试用例，用户可以通过命令行参数自定义测试的各种方面"><meta property="og:type" content="article"><meta property="og:url" content="/first-sysbench-lua-script/"><meta property="og:image" content="/avatar.jpeg"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-04-09T15:52:12+08:00"><meta property="article:modified_time" content="2024-04-09T15:52:12+08:00"><meta property="og:site_name" content="C4H"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="/avatar.jpeg"><meta name=twitter:title content="编写你的第一个 Sysbench Lua Script"><meta name=twitter:description content="零、sysbench 介绍Sysbench 是一个开源的多线程性能测试工具。它提供了一系列的测试用例，用户可以通过命令行参数自定义测试的各种方面"><meta name=application-name content="C4H"><meta name=apple-mobile-web-app-title content="C4H"><meta name=theme-color content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=/first-sysbench-lua-script/><link rel=prev href=/tidb-you-ya-guan-bi/><link rel=stylesheet href=/lib/normalize/normalize.min.css><link rel=stylesheet href=/css/color.css><link rel=stylesheet href=/css/style.min.css><link rel=preload as=style onload='this.onload=null,this.rel="stylesheet"' href=/lib/fontawesome-free/all.min.css><noscript><link rel=stylesheet href=/lib/fontawesome-free/all.min.css></noscript><link rel=preload as=style onload='this.onload=null,this.rel="stylesheet"' href=/lib/animate/animate.min.css><noscript><link rel=stylesheet href=/lib/animate/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"编写你的第一个 Sysbench Lua Script","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"\/first-sysbench-lua-script\/"},"genre":"posts","wordcount":1548,"url":"\/first-sysbench-lua-script\/","datePublished":"2024-04-09T15:52:12+08:00","dateModified":"2024-04-09T15:52:12+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"happyuncle"},"description":""}</script><script src=//instant.page/5.1.1 defer type=module integrity=sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq></script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>function setTheme(e){document.body.setAttribute("theme",e),document.documentElement.style.setProperty("color-scheme",e==="light"?"light":"dark")}function saveTheme(e){window.localStorage&&localStorage.setItem("theme",e)}function getMeta(e){const t=document.getElementsByTagName("meta");for(let n=0;n<t.length;n++)if(t[n].getAttribute("name")===e)return t[n];return""}if(window.localStorage&&localStorage.getItem("theme")){let e=localStorage.getItem("theme");e==="light"||e==="dark"||e==="black"?setTheme(e):setTheme(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}else"auto"==="light"||"auto"==="dark"||"auto"==="black"?(setTheme("auto"),saveTheme("auto")):(saveTheme("auto"),setTheme(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));let metaColors={light:"#f8f8f8",dark:"#252627",black:"#000000"};getMeta("theme-color").content=metaColors[document.body.getAttribute("theme")]</script><div id=back-to-top></div><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=C4H><span id=desktop-header-typeit class=typeit></span></a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=# class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i></a>
+<a href=# class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i></a>
+<span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i></span>
+</span><a href=# class="menu-item theme-select" title=切换主题><i class="fas fa-adjust fa-fw"></i>
+<select class=color-theme-select id=theme-select-desktop title=切换主题><option value=light>浅色</option><option value=dark>深色</option><option value=black>黑色</option><option value=auto>跟随系统</option></select></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=C4H><span id=mobile-header-typeit class=typeit></span></a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=# class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i></a>
+<a href=# class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i></a>
+<span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=# class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/ title>文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a href=# class="menu-item theme-select" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+<select class=color-theme-select id=theme-select-mobile title=切换主题><option value=light>浅色</option><option value=dark>深色</option><option value=black>黑色</option><option value=auto>跟随系统</option></select></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class="toc-content always-active" id=toc-content-auto><nav id=TableOfContents><ul><li><a href=#零sysbench-介绍>零、sysbench 介绍</a></li><li><a href=#一准备工作>一、准备工作：</a></li><li><a href=#二开始编写>二、开始编写</a></li><li><a href=#三看个例子>三、看个例子</a></li><li><a href=#四跑起来>四、跑起来</a></li></ul></nav></div></div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle","normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC","true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">编写你的第一个 Sysbench Lua Script</h1><div class=post-meta><div class=post-meta-line><span class=post-author><i class="author fas fa-user-circle fa-fw"></i><a href=/ title=Author rel=author class=author>happyuncle</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2024-04-09>2024-04-09</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime=2024-04-09>2024-04-09</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1548 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#零sysbench-介绍>零、sysbench 介绍</a></li><li><a href=#一准备工作>一、准备工作：</a></li><li><a href=#二开始编写>二、开始编写</a></li><li><a href=#三看个例子>三、看个例子</a></li><li><a href=#四跑起来>四、跑起来</a></li></ul></nav></div></div><div class=content id=content><h2 id=零sysbench-介绍 class=headerLink><a href=#%e9%9b%b6sysbench-%e4%bb%8b%e7%bb%8d class=header-mark></a>零、sysbench 介绍</h2><p>Sysbench 是一个开源的<span style=color:#ff4c41>多线程性能测试工具</span>。它提供了一系列的测试用例，用户<span style=color:#ff4c41>可以通过命令行参数自定义测试的各种方面，如线程数、测试时长、数据大小</span>等。</p><p>Sysbench <span style=color:#ff4c41>内置了一些基本的测试模式</span>，如CPU、内存和I/O性能测试，以及针对MySQL和PostgreSQL的数据库测试。但是，当这些内置测试不足以满足用户的特定需求时，Lua 脚本就显得尤为重要。<span style=color:#ff4c41>通过编写Lua脚本，用户可以创建完全定制的测试案例</span>，从而获得更精确和相关的性能指标。</p><h2 id=一准备工作 class=headerLink><a href=#%e4%b8%80%e5%87%86%e5%a4%87%e5%b7%a5%e4%bd%9c class=header-mark></a>一、准备工作：</h2><p>用简短的时间了解些lua语法：https://www.runoob.com/lua/lua-tutorial.html</p><h2 id=二开始编写 class=headerLink><a href=#%e4%ba%8c%e5%bc%80%e5%a7%8b%e7%bc%96%e5%86%99 class=header-mark></a>二、开始编写</h2><p>编写 sysbench 的 lua 脚本主要工作就是实现如下4个函数，其中init可以不实现</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=kr>function</span> <span class=nf>init</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=n>print</span><span class=p>(</span><span class=s2>&#34;init ...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- sysbench preapre 阶段</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>prepare</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=n>print</span><span class=p>(</span><span class=s2>&#34;prepare ...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- sysbench cleanup 阶段</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>cleanup</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=n>print</span><span class=p>(</span><span class=s2>&#34;clenup ...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- sysbench run 阶段，分成3部分，主要逻辑在event中实现，init 和 done 可以用来做数据准备和计算、数据库连接与断开</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>thread_init</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=n>print</span><span class=p>(</span><span class=s2>&#34;thread init ...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>event</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=n>print</span><span class=p>(</span><span class=s2>&#34;event ...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>thread_done</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=n>print</span><span class=p>(</span><span class=s2>&#34;thread done ...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>执行 sysbench prepare</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>#( 04/10/24@ 2:55下午 )( root@MacBook-Pro ):~/code/cpp/sysbench@heads/1.0.20✗✗✗</span>
+</span></span><span class=line><span class=cl>   sysbench demo.lua  --mysql-host<span class=o>=</span>127.0.0.1 --time<span class=o>=</span><span class=m>1</span> --report-interval<span class=o>=</span><span class=m>1</span> --mysql-port<span class=o>=</span><span class=m>4000</span> --mysql-userroot --mysql-passwordroot --mysql-db<span class=o>=</span>b --table-size<span class=o>=</span><span class=m>100</span> --tables<span class=o>=</span><span class=m>1</span> --threads<span class=o>=</span><span class=m>1</span> prepare
+</span></span><span class=line><span class=cl>sysbench 1.0.20 <span class=o>(</span>using system LuaJIT 2.1.0-beta3<span class=o>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>prepare ...       <span class=c1># 这里对应 function prepare()</span>
+</span></span></code></pre></td></tr></table></div></div><p>执行 sysbench run</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>#( 04/10/24@ 2:55下午 )( root@MacBook-Pro ):~/code/cpp/sysbench@heads/1.0.20✗✗✗</span>
+</span></span><span class=line><span class=cl>   sysbench demo.lua  --mysql-host<span class=o>=</span>127.0.0.1 --time<span class=o>=</span><span class=m>1</span> --report-interval<span class=o>=</span><span class=m>1</span> --mysql-port<span class=o>=</span><span class=m>4000</span> --mysql-userroot --mysql-passwordroot --mysql-db<span class=o>=</span>b --table-size<span class=o>=</span><span class=m>100</span> --tables<span class=o>=</span><span class=m>1</span> --threads<span class=o>=</span><span class=m>1</span> run 
+</span></span><span class=line><span class=cl>sysbench 1.0.20 <span class=o>(</span>using system LuaJIT 2.1.0-beta3<span class=o>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>init ...          <span class=c1># 这里对应 function init()</span>
+</span></span><span class=line><span class=cl>Running the <span class=nb>test</span> with following options:
+</span></span><span class=line><span class=cl>Number of threads: <span class=m>1</span>
+</span></span><span class=line><span class=cl>Report intermediate results every <span class=m>1</span> second<span class=o>(</span>s<span class=o>)</span>
+</span></span><span class=line><span class=cl>Initializing random number generator from current <span class=nb>time</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Initializing worker threads...
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>thread init ...   <span class=c1># 这里对应 function thread_init()</span>
+</span></span><span class=line><span class=cl>Threads started!
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>event ...         <span class=c1># 这里对应 function event()</span>
+</span></span><span class=line><span class=cl>event ...
+</span></span><span class=line><span class=cl>... ...
+</span></span><span class=line><span class=cl>event ...
+</span></span><span class=line><span class=cl>event ...
+</span></span><span class=line><span class=cl>thread <span class=k>done</span> ...   <span class=c1># 这里对应 function thread_done()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>General statistics:
+</span></span><span class=line><span class=cl>    total time:                          1.0006s
+</span></span><span class=line><span class=cl>    total number of events:              <span class=m>680596</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Latency <span class=o>(</span>ms<span class=o>)</span>:
+</span></span><span class=line><span class=cl>         min:                                    0.00
+</span></span><span class=line><span class=cl>         avg:                                    0.00
+</span></span><span class=line><span class=cl>         max:                                    0.98
+</span></span><span class=line><span class=cl>         95th percentile:                        0.00
+</span></span><span class=line><span class=cl>         sum:                                  835.41
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Threads fairness:
+</span></span><span class=line><span class=cl>    events <span class=o>(</span>avg/stddev<span class=o>)</span>:           680596.0000/0.00
+</span></span><span class=line><span class=cl>    execution <span class=nb>time</span> <span class=o>(</span>avg/stddev<span class=o>)</span>:   0.8354/0.00
+</span></span></code></pre></td></tr></table></div></div><p>执行 sysbench cleanup</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>#( 04/10/24@ 2:55下午 )( root@MacBook-Pro ):~/code/cpp/sysbench@heads/1.0.20✗✗✗</span>
+</span></span><span class=line><span class=cl>   sysbench demo.lua  --mysql-host<span class=o>=</span>127.0.0.1 --time<span class=o>=</span><span class=m>1</span> --report-interval<span class=o>=</span><span class=m>1</span> --mysql-port<span class=o>=</span><span class=m>4000</span> --mysql-userroot --mysql-passwordroot --mysql-db<span class=o>=</span>b --table-size<span class=o>=</span><span class=m>100</span> --tables<span class=o>=</span><span class=m>1</span> --threads<span class=o>=</span><span class=m>1</span> cleanup
+</span></span><span class=line><span class=cl>sysbench 1.0.20 <span class=o>(</span>using system LuaJIT 2.1.0-beta3<span class=o>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>clenup ...       <span class=c1># 这里对应 function cleanup()</span>
+</span></span></code></pre></td></tr></table></div></div><p>当然如果你有一些自定义参数，也可以通过如下方式声明，string、number、boolean都可以，这样就可以在上面的五个函数中使用</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>sysbench.cmdline</span><span class=p>.</span><span class=n>options</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=n>table_size</span> <span class=o>=</span> <span class=p>{</span><span class=s2>&#34;Number of rows per table&#34;</span><span class=p>,</span> <span class=mi>10000</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>   <span class=n>create_secondary</span> <span class=o>=</span> <span class=p>{</span><span class=s2>&#34;Create a secondary index in addition to the PRIMARY KEY&#34;</span><span class=p>,</span> <span class=kc>true</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>   <span class=n>mysql_storage_engine</span> <span class=o>=</span> <span class=p>{</span><span class=s2>&#34;Storage engine, if MySQL is used&#34;</span><span class=p>,</span> <span class=s2>&#34;innodb&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=cl>   <span class=c1>-- ...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- ...</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>event</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=n>print</span><span class=p>(</span><span class=n>sysbench.opt</span><span class=p>.</span><span class=n>table_size</span><span class=p>)</span>   <span class=c1>-- 使用自定义命令行参数</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>当然 sysbenc 也提供了一些库函数、类型，我们可以直接使用</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=c1>-- 一些随机函数</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>rand</span><span class=p>.</span><span class=nf>uniform_uint64</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>rand</span><span class=p>.</span><span class=nf>default</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>rand</span><span class=p>.</span><span class=nf>uniform</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>rand</span><span class=p>.</span><span class=nf>gaussian</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>rand</span><span class=p>.</span><span class=nf>special</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>rand</span><span class=p>.</span><span class=nf>pareto</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>rand</span><span class=p>.</span><span class=nf>unique</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>rand</span><span class=p>.</span><span class=nf>string</span><span class=p>(</span><span class=n>fmt</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>rand</span><span class=p>.</span><span class=nf>uniform_double</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- 数据库驱动</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>sysbench</span><span class=p>.</span><span class=nc>sql</span><span class=p>.</span><span class=nf>driver</span><span class=p>(</span><span class=n>driver_name</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- 连接数据库（上面函数执行后返回值可以调动的方法）</span>
+</span></span><span class=line><span class=cl><span class=kd>local</span> <span class=n>driver_methods</span> <span class=o>=</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>driver_methods</span><span class=p>.</span><span class=nf>connect</span><span class=p>(</span><span class=n>self</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- 数据库操作（上面函数执行后返回值可以调动的方法）</span>
+</span></span><span class=line><span class=cl><span class=kd>local</span> <span class=n>connection_methods</span> <span class=o>=</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>connection_methods</span><span class=p>.</span><span class=nf>disconnect</span><span class=p>(</span><span class=n>self</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>connection_methods</span><span class=p>.</span><span class=nf>reconnect</span><span class=p>(</span><span class=n>self</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>connection_methods</span><span class=p>.</span><span class=nf>check_error</span><span class=p>(</span><span class=n>self</span><span class=p>,</span> <span class=n>rs</span><span class=p>,</span> <span class=n>query</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>connection_methods</span><span class=p>.</span><span class=nf>query</span><span class=p>(</span><span class=n>self</span><span class=p>,</span> <span class=n>query</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>connection_methods</span><span class=p>.</span><span class=nf>bulk_insert_init</span><span class=p>(</span><span class=n>self</span><span class=p>,</span> <span class=n>query</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>connection_methods</span><span class=p>.</span><span class=nf>bulk_insert_next</span><span class=p>(</span><span class=n>self</span><span class=p>,</span> <span class=n>val</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>connection_methods</span><span class=p>.</span><span class=nf>bulk_insert_done</span><span class=p>(</span><span class=n>self</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>connection_methods</span><span class=p>.</span><span class=nf>prepare</span><span class=p>(</span><span class=n>self</span><span class=p>,</span> <span class=n>query</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>connection_methods</span><span class=p>.</span><span class=nf>query_row</span><span class=p>(</span><span class=n>self</span><span class=p>,</span> <span class=n>query</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- 数据库查询结果（执行query后返回值可以调用的方法）</span>
+</span></span><span class=line><span class=cl><span class=kd>local</span> <span class=n>result_methods</span> <span class=o>=</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>result_methods</span><span class=p>.</span><span class=nf>fetch_row</span><span class=p>(</span><span class=n>self</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nc>result_methods</span><span class=p>.</span><span class=nf>free</span><span class=p>(</span><span class=n>self</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- ...</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=三看个例子 class=headerLink><a href=#%e4%b8%89%e7%9c%8b%e4%b8%aa%e4%be%8b%e5%ad%90 class=header-mark></a>三、看个例子</h2><p>下面看个简单的例子，来自官方 bulk_insert.lua</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=cp>#!/usr/bin/env sysbench</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- sysbench prepare 阶段，灌数据</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>prepare</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>   <span class=kd>local</span> <span class=n>i</span>
+</span></span><span class=line><span class=cl>   <span class=kd>local</span> <span class=n>drv</span> <span class=o>=</span> <span class=n>sysbench.sql</span><span class=p>.</span><span class=n>driver</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>   <span class=kd>local</span> <span class=n>con</span> <span class=o>=</span> <span class=n>drv</span><span class=p>:</span><span class=n>connect</span><span class=p>()</span>                                                     <span class=c1>-- 连接数据库</span>
+</span></span><span class=line><span class=cl>   <span class=kr>for</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span> <span class=n>sysbench.opt</span><span class=p>.</span><span class=n>threads</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>      <span class=n>print</span><span class=p>(</span><span class=s2>&#34;Creating table &#39;sbtest&#34;</span> <span class=o>..</span> <span class=n>i</span> <span class=o>..</span> <span class=s2>&#34;&#39;...&#34;</span><span class=p>)</span>                             <span class=c1>-- 创建表</span>
+</span></span><span class=line><span class=cl>      <span class=n>con</span><span class=p>:</span><span class=n>query</span><span class=p>(</span><span class=n>string.format</span><span class=p>(</span><span class=s>[[                                                 
+</span></span></span><span class=line><span class=cl><span class=s>        CREATE TABLE IF NOT EXISTS sbtest%d (
+</span></span></span><span class=line><span class=cl><span class=s>          id INTEGER NOT NULL,
+</span></span></span><span class=line><span class=cl><span class=s>          k INTEGER DEFAULT &#39;0&#39; NOT NULL,
+</span></span></span><span class=line><span class=cl><span class=s>          PRIMARY KEY (id))]]</span><span class=p>,</span> <span class=n>i</span><span class=p>))</span>                                               <span class=c1>-- 查询数据，对应 function connection_methods.query(self, query)</span>
+</span></span><span class=line><span class=cl>   <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- sysbench run 阶段，准备工作</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>thread_init</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>   <span class=n>drv</span> <span class=o>=</span> <span class=n>sysbench.sql</span><span class=p>.</span><span class=n>driver</span><span class=p>()</span>                                                   <span class=c1>-- 连接数据库</span>
+</span></span><span class=line><span class=cl>   <span class=n>con</span> <span class=o>=</span> <span class=n>drv</span><span class=p>:</span><span class=n>connect</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- sysbench run 阶段，收尾工作</span>
+</span></span><span class=line><span class=cl><span class=n>cursize</span><span class=o>=</span><span class=mi>0</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>event</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>   <span class=kr>if</span> <span class=p>(</span><span class=n>cursize</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>      <span class=n>con</span><span class=p>:</span><span class=n>bulk_insert_init</span><span class=p>(</span><span class=s2>&#34;INSERT INTO sbtest&#34;</span> <span class=o>..</span> <span class=n>thread_id</span><span class=o>+</span><span class=mi>1</span> <span class=o>..</span> <span class=s2>&#34; VALUES&#34;</span><span class=p>)</span>     <span class=c1>-- function connection_methods.bulk_insert_init(self, query)</span>
+</span></span><span class=line><span class=cl>   <span class=kr>end</span>
+</span></span><span class=line><span class=cl>   <span class=n>cursize</span> <span class=o>=</span> <span class=n>cursize</span> <span class=o>+</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>   <span class=n>con</span><span class=p>:</span><span class=n>bulk_insert_next</span><span class=p>(</span><span class=s2>&#34;(&#34;</span> <span class=o>..</span> <span class=n>cursize</span> <span class=o>..</span> <span class=s2>&#34;,&#34;</span> <span class=o>..</span> <span class=n>cursize</span> <span class=o>..</span> <span class=s2>&#34;)&#34;</span><span class=p>)</span>                 <span class=c1>-- 写入数据，function connection_methods.bulk_insert_next(self, val)</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- sysbench run 阶段，收尾工作</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>thread_done</span><span class=p>(</span><span class=n>thread_9d</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>   <span class=n>con</span><span class=p>:</span><span class=n>bulk_insert_done</span><span class=p>()</span>                                                        <span class=c1>-- function connection_methods.bulk_insert_done(self)</span>
+</span></span><span class=line><span class=cl>   <span class=n>con</span><span class=p>:</span><span class=n>disconnect</span><span class=p>()</span>                                                              <span class=c1>-- 断开数据库连接</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- sysbench cleanup 阶段，清理数据</span>
+</span></span><span class=line><span class=cl><span class=kr>function</span> <span class=nf>cleanup</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>   <span class=kd>local</span> <span class=n>i</span>
+</span></span><span class=line><span class=cl>   <span class=kd>local</span> <span class=n>drv</span> <span class=o>=</span> <span class=n>sysbench.sql</span><span class=p>.</span><span class=n>driver</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>   <span class=kd>local</span> <span class=n>con</span> <span class=o>=</span> <span class=n>drv</span><span class=p>:</span><span class=n>connect</span><span class=p>()</span>     
+</span></span><span class=line><span class=cl>   <span class=kr>for</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span> <span class=n>sysbench.opt</span><span class=p>.</span><span class=n>threads</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>      <span class=n>print</span><span class=p>(</span><span class=s2>&#34;Dropping table &#39;sbtest&#34;</span> <span class=o>..</span> <span class=n>i</span> <span class=o>..</span> <span class=s2>&#34;&#39;...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=n>con</span><span class=p>:</span><span class=n>query</span><span class=p>(</span><span class=s2>&#34;DROP TABLE IF EXISTS sbtest&#34;</span> <span class=o>..</span> <span class=n>i</span> <span class=p>)</span>
+</span></span><span class=line><span class=cl>   <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=四跑起来 class=headerLink><a href=#%e5%9b%9b%e8%b7%91%e8%b5%b7%e6%9d%a5 class=header-mark></a>四、跑起来</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=c1>-- prepare</span>
+</span></span><span class=line><span class=cl><span class=n>sysbench</span> <span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=kd>local</span><span class=o>/</span><span class=n>share</span><span class=o>/</span><span class=n>sysbench</span><span class=o>/</span><span class=n>bulk_insert.lua</span> <span class=c1>--mysql-host=127.0.0.1 --time=60 --report-interval=1 --mysql-port=3306 --mysql-user=root --mysql-password=123456 --mysql-db=a --table-size=100 --tables=4 --threads=4 prepare</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- run</span>
+</span></span><span class=line><span class=cl><span class=n>sysbench</span> <span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=kd>local</span><span class=o>/</span><span class=n>share</span><span class=o>/</span><span class=n>sysbench</span><span class=o>/</span><span class=n>bulk_insert.lua</span> <span class=c1>--mysql-host=127.0.0.1 --time=60 --report-interval=1 --mysql-port=3306 --mysql-user=root --mysql-password=123456 --mysql-db=a --table-size=100 --tables=4 --threads=4 run</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>-- cleanup</span>
+</span></span><span class=line><span class=cl><span class=n>sysbench</span> <span class=o>/</span><span class=n>usr</span><span class=o>/</span><span class=kd>local</span><span class=o>/</span><span class=n>share</span><span class=o>/</span><span class=n>sysbench</span><span class=o>/</span><span class=n>bulk_insert.lua</span> <span class=c1>--mysql-host=127.0.0.1 --time=60 --report-interval=1 --mysql-port=3306 --mysql-user=root --mysql-password=123456 --mysql-db=a --table-size=100 --tables=4 --threads=4 cleanup</span>
+</span></span></code></pre></td></tr></table></div></div></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2024-04-09</span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-mardown href=/first-sysbench-lua-script/index.md target=_blank rel="noopener noreferrer">阅读原始文档</a></span></div><div class=post-info-share><span></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/tidb-you-ya-guan-bi/ class=prev rel=prev title="TiDB 优雅关闭"><i class="fas fa-angle-left fa-fw"></i>TiDB 优雅关闭</a></div></div><div id=comments><div id=giscus></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://giscus.app/>giscus</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2019 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank rel="noopener noreferrer">happyuncle</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div><div class=footer-line></div><div class=footer-line></div></div></footer></div><div id=fixed-buttons><a href=#back-to-top id=back-to-top-button class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><div id=cookieconsent-container></div><div class=assets><link rel=stylesheet href=/lib/katex/katex.min.css><link rel=preload as=style onload='this.onload=null,this.rel="stylesheet"' href=/lib/katex/copy-tex.min.css><noscript><link rel=stylesheet href=/lib/katex/copy-tex.min.css></noscript><link rel=stylesheet href=/lib/cookieconsent/cookieconsent.min.css><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{giscus:{darkTheme:"dark",dataCategory:"Announcements",dataCategoryId:"DIC_kwDOJFSaWc4CUpIr",dataEmitMetadata:"0",dataInputPosition:"top",dataLang:"en",dataMapping:"pathname",dataReactionsEnabled:"1",dataRepo:"HappyUncle/happyuncle.github.io",dataRepoId:"R_kgDOJFSaWQ",dataStrict:"0",lightTheme:"light"}},cookieconsent:{content:{dismiss:"同意",link:"了解更多",message:"本网站使用 Cookies 来改善您的浏览体验."},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},data:{"desktop-header-typeit":"C4H","mobile-header-typeit":"C4H"},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{distance:100,findAllMatches:!1,fuseIndexURL:"/index.json",highlightTag:"em",ignoreFieldNorm:!1,ignoreLocation:!1,isCaseSensitive:!1,location:0,maxResultLength:10,minMatchCharLength:2,noResultsFound:"没有找到结果",snippetLength:50,threshold:.3,type:"fuse",useExtendedSearch:!1},table:{sort:!0},typeit:{cursorChar:"|",cursorSpeed:1e3,data:{"desktop-header-typeit":["desktop-header-typeit"],"mobile-header-typeit":["mobile-header-typeit"]},duration:-1,speed:100}}</script><script type=text/javascript src=/js/giscus.min.js defer></script><script type=text/javascript src=/lib/tablesort/tablesort.min.js></script><script type=text/javascript src=/lib/clipboard/clipboard.min.js></script><script type=text/javascript src=/lib/typeit/typeit.min.js></script><script type=text/javascript src=/lib/katex/katex.min.js defer></script><script type=text/javascript src=/lib/katex/auto-render.min.js defer></script><script type=text/javascript src=/lib/katex/copy-tex.min.js defer></script><script type=text/javascript src=/lib/katex/mhchem.min.js defer></script><script type=text/javascript src=/js/katex.min.js defer></script><script type=text/javascript src=/lib/cookieconsent/cookieconsent.min.js defer></script><script type=text/javascript src=/js/cookieconsent.min.js defer></script><script type=text/javascript src=/js/theme.min.js defer></script><script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-T9314S6XRH")</script><script type=text/javascript src="https://www.googletagmanager.com/gtag/js?id=G-T9314S6XRH" async></script><script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?2dac9531c61d782d11f76c2c92995a7c",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></div></body></html>
