@@ -14,7 +14,7 @@ Sysbench <span style="color: rgb(255, 76, 65);">内置了一些基本的测试�
 
 ## 二、开始编写
 
-编写 sysbench 的 lua 脚本主要工作就是实现如下4个函数，其中init可以不实现
+编写 sysbench 的 lua 脚本主要工作就是实现如下6个函数，主要实现prepare、event、cleanup即可
 
 ```lua
 function init()
