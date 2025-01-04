@@ -78,12 +78,15 @@
 错误可以注入到数据库中了，那么怎么观测数据库服务再哪个环节出现了问题呢？这就得请出 Metrics、Log 和 Tracing 三剑客了。 这些想必大家都很熟悉了：
 
 - Metrics： 丰富的内核指标、秒级数据采集、智能的异常判断&报警
+
 ![Img](/images/learn-distributed-system-testing-from-tidb.md/img-20241231135113.png)
 
 - Log： 存放了详细的错误信息，可以使用 FluentBit 或 Promtail，将这些数据导入 ES 或 LOKI 进行相关分析。对于分布式系统，一个事务会请求到做个组件，那么可以使用transaction ID打印到日志中将其关联起来。[4]
+
 ![Img](/images/learn-distributed-system-testing-from-tidb.md/img-20241231135106.png)
 
 - Tracing： 在调用链概念出现之前，日志是用来帮助我们理解应用程序中发生情况的唯一途径。大多数的应用程序在他们运行的服务器上创建日志。然而，对于分布式系统来说，光靠日志是不够的，因为光靠日志定位问题的具体位置是一项巨大的挑战。但是调用链则可以非常方便的处理这种场景，因为其可以完整的追踪一个请求的开始到结束所经过的所有节点。[1]
+
 ![Img](/images/learn-distributed-system-testing-from-tidb.md/img-20241231135059.png)
 
 ### 5、小结
