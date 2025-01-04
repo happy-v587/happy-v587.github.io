@@ -104,7 +104,7 @@
 
 最终的运行关系如图所示：
 
-![Img](/image/learn-distributed-system-testing-from-tidb.md/img-20250104234735.png)
+![Img](/images/learn-distributed-system-testing-from-tidb.md/img-20250104234735.png)
 
 - 测试人员提交一个测试任务（argo workflow），依次执行step 1、2、3。
 - 在执行 step 3 时，运行的镜像是由 tipocket 框架编写而来的测试case。这个case会创建一个tidb集群（节点副本数可以在配置），然后运行测试workload（模拟银行转账、模拟财务报表分析、或者随机生成SQL等，需要根据不同的workload编写对应的数据校验逻辑），workload运行期间还会随机生成各种错误并注入到集群中。
