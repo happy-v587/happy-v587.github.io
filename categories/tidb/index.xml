@@ -1,1 +1,41 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>tidb - 分类 - C4H</title><link>/categories/tidb/</link><description>tidb - 分类 - C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Mon, 30 Dec 2024 15:45:19 +0800</lastBuildDate><atom:link href="/categories/tidb/" rel="self" type="application/rss+xml"/><item><title>从 TiDB 学习分布式数据库测试</title><link>/learn-distributed-system-testing-from-tidb/</link><pubDate>Mon, 30 Dec 2024 15:45:19 +0800</pubDate><author><name>happy-v587</name></author><guid>/learn-distributed-system-testing-from-tidb/</guid><description>前言最近在研究数据库正确性测试相关的内容，恰好看到TiDB数据库在这方面的工作，很受启发，故写此文章。 推荐下一些TiDB官方好文章： 《分布式</description></item><item><title>TiDB 优雅关闭</title><link>/tidb-you-ya-guan-bi/</link><pubDate>Mon, 31 Jul 2023 20:28:19 +0800</pubDate><author><name>happy-v587</name></author><guid>/tidb-you-ya-guan-bi/</guid><description>背景今天使用tiup做实验的事后，将tidb节点从2个缩到1个，发现tiup返回成功但是tidb-server进程还在。 这就引发的我的好奇心</description></item><item><title>TiProxy 原理和实现</title><link>/tiproxy-yuan-li-he-shi-xian/</link><pubDate>Sun, 30 Jul 2023 13:20:35 +0800</pubDate><author><name>happy-v587</name></author><guid>/tiproxy-yuan-li-he-shi-xian/</guid><description>说明在上篇《TiProxy 尝鲜》中做了一些实验，比如加减tidb节点后tiproxy可以做到自动负载均衡，如果遇到会话有未提交的事务则等待事</description></item><item><title>TiProxy 尝鲜</title><link>/try-tiproxy/</link><pubDate>Sat, 29 Jul 2023 22:09:11 +0800</pubDate><author><name>happy-v587</name></author><guid>/try-tiproxy/</guid><description>说明最近发现 tidb 有个 https://github.com/pingcap/TiProxy 仓库，抱着好奇的心态想试试这个组件的使用效果。于是按照文档的介绍在本地环境使用tiup做了一些实验，现在将实验过程和实验</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tidb on C4H</title><link>/categories/tidb/</link><description>Recent content in Tidb on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Mon, 30 Dec 2024 15:45:19 +0800</lastBuildDate><atom:link href="/categories/tidb/index.xml" rel="self" type="application/rss+xml"/><item><title>从 TiDB 学习分布式数据库测试</title><link>/learn-distributed-system-testing-from-tidb/</link><pubDate>Mon, 30 Dec 2024 15:45:19 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/learn-distributed-system-testing-from-tidb/</guid><description>&lt;h2 id="前言" class="headerLink"&gt;
+ &lt;a href="#%e5%89%8d%e8%a8%80" class="header-mark"&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;最近在研究数据库正确性测试相关的内容，恰好看到TiDB数据库在这方面的工作，很受启发，故写此文章。&lt;/p&gt;
+&lt;p&gt;推荐下一些TiDB官方好文章：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;《分布式系统测试那些事儿 – 理念》https://cn.pingcap.com/blog/distributed-system-test-1/&lt;/li&gt;
+&lt;li&gt;《分布式系统测试那些事儿 – 错误注入》https://cn.pingcap.com/blog/distributed-system-test-2/&lt;/li&gt;
+&lt;li&gt;《分布式系统测试那些事儿 – 信心的毁灭与重建》https://cn.pingcap.com/blog/distributed-system-test-3/&lt;/li&gt;
+&lt;li&gt;《TiDB 混沌工程实践：如何打造健壮的分布式系统？》https://cn.pingcap.com/blog/tidb-chaos-engineering/&lt;/li&gt;
+&lt;li&gt;《基于 Chaos Mesh 和 Argo 打造分布式测试平台》https://cn.pingcap.com/blog/building-a-distributed-test-platform-based-on-chaos-mesh-and-argo/&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="从一个bug开始" class="headerLink"&gt;
+ &lt;a href="#%e4%bb%8e%e4%b8%80%e4%b8%aabug%e5%bc%80%e5%a7%8b" class="header-mark"&gt;&lt;/a&gt;从一个BUG开始&lt;/h2&gt;&lt;p&gt;理论上说，任何一款支持事务的数据库都应该支持ACID四个特性。实际上呢，可能因为未知的软件Bug、机器故障（比特反转）等，导致数据库在实际运行中未能完全满足，这就有可能对上层业务带来严重的影响。&lt;/p&gt;</description></item><item><title>TiDB 优雅关闭</title><link>/tidb-you-ya-guan-bi/</link><pubDate>Mon, 31 Jul 2023 20:28:19 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/tidb-you-ya-guan-bi/</guid><description>&lt;hr&gt;
+&lt;h2 id="背景" class="headerLink"&gt;
+ &lt;a href="#%e8%83%8c%e6%99%af" class="header-mark"&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;今天使用tiup做实验的事后，将tidb节点从2个缩到1个，发现tiup返回成功但是tidb-server进程还在。&lt;/p&gt;
+&lt;p&gt;这就引发的我的好奇心，why？&lt;/p&gt;
+&lt;h2 id="实验复现" class="headerLink"&gt;
+ &lt;a href="#%e5%ae%9e%e9%aa%8c%e5%a4%8d%e7%8e%b0" class="header-mark"&gt;&lt;/a&gt;实验复现&lt;/h2&gt;&lt;h3 id="启动集群" class="headerLink"&gt;
+ &lt;a href="#%e5%90%af%e5%8a%a8%e9%9b%86%e7%be%a4" class="header-mark"&gt;&lt;/a&gt;启动集群&lt;/h3&gt;&lt;div class="code-block highlight is-closed show-line-numbers tw-group tw-my-2"&gt;
+ &lt;div class="
+ 
+ tw-flex 
+ tw-flex-row
+ tw-flex-1 
+ tw-justify-between 
+ tw-w-full tw-bg-bgColor-secondary
+ "&gt; 
+ &lt;button 
+ class="
+ code-block-button
+ tw-mx-2 
+ tw-flex
+ tw-flex-row
+ tw-flex-1"
+ aria-hidden="true"&gt;
+ &lt;div class="group-[.is-open]:tw-rotate-90 tw-transition-[transform] tw-duration-500 tw-ease-in-out print:!tw-hidden tw-w-min tw-h-min tw-my-1 tw-mx-1"&gt;&lt;svg class="icon"
+ xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"&gt;&lt;!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --&gt;&lt;path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/&gt;&lt;/svg&gt;&lt;/div&gt;
+ &lt;p class="tw-select-none !tw-my-1"&gt;bash&lt;/p&gt;</description></item><item><title>TiProxy 原理和实现</title><link>/tiproxy-yuan-li-he-shi-xian/</link><pubDate>Sun, 30 Jul 2023 13:20:35 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/tiproxy-yuan-li-he-shi-xian/</guid><description>&lt;hr&gt;
+&lt;h2 id="说明" class="headerLink"&gt;
+ &lt;a href="#%e8%af%b4%e6%98%8e" class="header-mark"&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;在上篇&lt;a href="https://tidb.net/blog/bbf3f52d" target="_blank" rel="noopener noreferrer"&gt;《TiProxy 尝鲜》&lt;/a&gt;中做了一些实验，比如加减tidb节点后tiproxy可以做到自动负载均衡，如果遇到会话有未提交的事务则等待事务结束才迁移。&lt;/p&gt;</description></item><item><title>TiProxy 尝鲜</title><link>/try-tiproxy/</link><pubDate>Sat, 29 Jul 2023 22:09:11 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/try-tiproxy/</guid><description>&lt;hr&gt;
+&lt;h2 id="说明" class="headerLink"&gt;
+ &lt;a href="#%e8%af%b4%e6%98%8e" class="header-mark"&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;最近发现 tidb 有个 &lt;a href="https://github.com/pingcap/TiProxy" target="_blank" rel="noopener noreferrer"&gt;https://github.com/pingcap/TiProxy&lt;/a&gt; 仓库，抱着好奇的心态想试试这个组件的使用效果。于是按照文档的介绍在本地环境使用tiup做了一些实验，现在将实验过程和实验结果分享给大家。&lt;/p&gt;</description></item></channel></rss>

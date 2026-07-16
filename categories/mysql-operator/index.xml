@@ -1,1 +1,49 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>mysql-operator - 分类 - C4H</title><link>/categories/mysql-operator/</link><description>mysql-operator - 分类 - C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Sun, 12 Mar 2023 19:33:20 +0800</lastBuildDate><atom:link href="/categories/mysql-operator/" rel="self" type="application/rss+xml"/><item><title>bitpoke/mysql-operator 技术解读系列 - 部署</title><link>/mysql-operator-1-%E9%83%A8%E7%BD%B2/</link><pubDate>Sun, 12 Mar 2023 19:33:20 +0800</pubDate><author><name>happy-v587</name></author><guid>/mysql-operator-1-%E9%83%A8%E7%BD%B2/</guid><description>mysql-operator chart 说明安装 mysql-operator 的操作命令在官方仓库和官网都有说明，具体安装命令如下： 1 2 3 ## For Helm v3 helm repo add bitpoke https://helm-charts.bitpoke.io helm install mysql-operator bitpoke/mysql-operator 在安装的chart包中，values.y</description></item><item><title>bitpoke/mysql-operator 技术解读系列 - 序</title><link>/mysql-operator-0/</link><pubDate>Tue, 07 Mar 2023 20:53:13 +0800</pubDate><author><name>happy-v587</name></author><guid>/mysql-operator-0/</guid><description>目的接下来的一段时间打算做个bitpoke/mysql-operator的技术解读。 出于两点考虑： 深度使用和改造过，熟悉这个项目 在 k8s 上部署 mysql-operator</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mysql-Operator on C4H</title><link>/categories/mysql-operator/</link><description>Recent content in Mysql-Operator on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Sun, 12 Mar 2023 19:33:20 +0800</lastBuildDate><atom:link href="/categories/mysql-operator/index.xml" rel="self" type="application/rss+xml"/><item><title>bitpoke/mysql-operator 技术解读系列 - 部署</title><link>/mysql-operator-1-%E9%83%A8%E7%BD%B2/</link><pubDate>Sun, 12 Mar 2023 19:33:20 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-operator-1-%E9%83%A8%E7%BD%B2/</guid><description>&lt;hr&gt;
+&lt;h2 id="mysql-operator-chart-说明" class="headerLink"&gt;
+ &lt;a href="#mysql-operator-chart-%e8%af%b4%e6%98%8e" class="header-mark"&gt;&lt;/a&gt;mysql-operator chart 说明&lt;/h2&gt;&lt;p&gt;安装 mysql-operator 的操作命令在&lt;a href="https://github.com/bitpoke/mysql-operator#controller-deploy" target="_blank" rel="noopener noreferrer"&gt;官方仓库&lt;/a&gt;和&lt;a href="https://www.bitpoke.io/docs/mysql-operator/getting-started/" target="_blank" rel="noopener noreferrer"&gt;官网&lt;/a&gt;都有说明，具体安装命令如下：&lt;/p&gt;
+&lt;div class="code-block highlight is-open show-line-numbers tw-group tw-my-2"&gt;
+ &lt;div class="
+ 
+ tw-flex 
+ tw-flex-row
+ tw-flex-1 
+ tw-justify-between 
+ tw-w-full tw-bg-bgColor-secondary
+ "&gt; 
+ &lt;button 
+ class="
+ code-block-button
+ tw-mx-2 
+ tw-flex
+ tw-flex-row
+ tw-flex-1"
+ aria-hidden="true"&gt;
+ &lt;div class="group-[.is-open]:tw-rotate-90 tw-transition-[transform] tw-duration-500 tw-ease-in-out print:!tw-hidden tw-w-min tw-h-min tw-my-1 tw-mx-1"&gt;&lt;svg class="icon"
+ xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"&gt;&lt;!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --&gt;&lt;path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/&gt;&lt;/svg&gt;&lt;/div&gt;
+ &lt;p class="tw-select-none !tw-my-1"&gt;bash&lt;/p&gt;</description></item><item><title>bitpoke/mysql-operator 技术解读系列 - 序</title><link>/mysql-operator-0/</link><pubDate>Tue, 07 Mar 2023 20:53:13 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-operator-0/</guid><description>&lt;hr&gt;
+&lt;h2 id="目的" class="headerLink"&gt;
+ &lt;a href="#%e7%9b%ae%e7%9a%84" class="header-mark"&gt;&lt;/a&gt;目的&lt;/h2&gt;&lt;p&gt;接下来的一段时间打算做个bitpoke/mysql-operator的技术解读。&lt;/p&gt;
+&lt;p&gt;出于两点考虑：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;深度使用和改造过，熟悉这个项目&lt;/li&gt;
+&lt;li&gt;在 k8s 上部署 mysql-operator 的需求比较大，但是有没有比较好的原理解读&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="项目" class="headerLink"&gt;
+ &lt;a href="#%e9%a1%b9%e7%9b%ae" class="header-mark"&gt;&lt;/a&gt;项目&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/bitpoke/mysql-operator" target="_blank" rel="noopener noreferrer"&gt;https://github.com/bitpoke/mysql-operator&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="范围" class="headerLink"&gt;
+ &lt;a href="#%e8%8c%83%e5%9b%b4" class="header-mark"&gt;&lt;/a&gt;范围&lt;/h2&gt;&lt;p&gt;包括但不限于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;创建集群&lt;/li&gt;
+&lt;li&gt;删除集群&lt;/li&gt;
+&lt;li&gt;参数修改&lt;/li&gt;
+&lt;li&gt;db user 操作&lt;/li&gt;
+&lt;li&gt;配置变更&lt;/li&gt;
+&lt;li&gt;备份数据&lt;/li&gt;
+&lt;li&gt;恢复数据&lt;/li&gt;
+&lt;li&gt;自动高可用&lt;/li&gt;
+&lt;li&gt;主备切换&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果有其他内容想要了解也可以留言~&lt;/p&gt;</description></item></channel></rss>
