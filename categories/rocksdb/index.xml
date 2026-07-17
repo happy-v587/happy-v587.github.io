@@ -1,2 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Rocksdb on C4H</title><link>/categories/rocksdb/</link><description>Recent content in Rocksdb on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Mon, 06 Jan 2025 17:23:00 +0800</lastBuildDate><atom:link href="/categories/rocksdb/index.xml" rel="self" type="application/rss+xml"/><item><title>恭喜，聪明的你发明了RocksDB的主从复制</title><link>/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/</link><pubDate>Mon, 06 Jan 2025 17:23:00 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/</guid><description>&lt;blockquote&gt;
- &lt;p&gt;本文由原作者归档自微信公众号「两分钟好奇心」，原文发布于 2025-01-06。原文链接：&lt;a href="https://mp.weixin.qq.com/s/YprloMHlrn0Nji92xxPaJg" target="_blank" rel="noopener noreferrer"&gt;恭喜，聪明的你发明了RocksDB的主从复制&lt;/a&gt;。&lt;/p&gt;</description></item></channel></rss>
+ &lt;p&gt;本文由原作者归档自微信公众号「两分钟好奇心」，原文发布于 2025-01-06。原文链接：&lt;a href="https://mp.weixin.qq.com/s/YprloMHlrn0Nji92xxPaJg" target="_blank" rel="noopener noreferrer"&gt;恭喜，聪明的你发明了RocksDB的主从复制&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>rocksdb：manifest 文件写流程</title><link>/rocksdb-manifest-wen-jian-xie-liu-cheng/</link><pubDate>Tue, 24 Sep 2024 21:02:25 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/rocksdb-manifest-wen-jian-xie-liu-cheng/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自知乎，原文发布于 2024-09-24。原文链接：&lt;a href="https://zhuanlan.zhihu.com/p/721898389" target="_blank" rel="noopener noreferrer"&gt;rocksdb：manifest 文件写流程&lt;/a&gt;。&lt;/p&gt;
+
+&lt;/blockquote&gt;&lt;h2 id="零说明" class="headerLink"&gt;
+ &lt;a href="#%e9%9b%b6%e8%af%b4%e6%98%8e" class="header-mark"&gt;&lt;/a&gt;零、说明&lt;/h2&gt;&lt;p&gt;manifest文件是rocksdb用来管理元信息变动的文件。文件中以VersionEdit为单位。记录了所有SST文件的创建、删除、层级调整等变动行为。&lt;/p&gt;
+&lt;p&gt;我们都知道，写文件之前需要先将文件open，然后才能写入。所以下文会先介绍manifest文件时怎么open的，然后说明一次变动是如何写入manifest文件中的。&lt;/p&gt;</description></item><item><title>Rockset：将 RocksDB 数据存储到S3上</title><link>/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/</link><pubDate>Sat, 10 Dec 2022 14:05:46 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自知乎，原文发布于 2022-12-10。原文链接：&lt;a href="https://zhuanlan.zhihu.com/p/590773344" target="_blank" rel="noopener noreferrer"&gt;Rockset：将 RocksDB 数据存储到S3上&lt;/a&gt;。&lt;/p&gt;
+
+&lt;/blockquote&gt;&lt;p&gt;本文要介绍的是基于RocksDB改造的rocksdb-cloud项目。&lt;/p&gt;</description></item><item><title>Rockset： 源码编译</title><link>/rockset-yuan-ma-bian-yi/</link><pubDate>Sat, 12 Mar 2022 23:02:41 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/rockset-yuan-ma-bian-yi/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自知乎，原文发布于 2022-03-12。原文链接：&lt;a href="https://zhuanlan.zhihu.com/p/480023126" target="_blank" rel="noopener noreferrer"&gt;Rockset： 源码编译&lt;/a&gt;。&lt;/p&gt;
+
+&lt;/blockquote&gt;&lt;h2 id="说明" class="headerLink"&gt;
+ &lt;a href="#%e8%af%b4%e6%98%8e" class="header-mark"&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;官方README.md里面已经有详细的编译说明了。值得注意的是：编译之前要先安装aws的sdk，并且要求安装到/usr/local目录下。为了支持存储到s3上，需要在环境变量里面配置USE_AWS=1。&lt;/p&gt;
+&lt;p&gt;&lt;img class="tw-inline" loading="lazy" src='/images/rockset-yuan-ma-bian-yi.md/img-01.jpg' alt="图 1" &gt;&lt;/p&gt;
+&lt;h2 id="编译" class="headerLink"&gt;
+ &lt;a href="#%e7%bc%96%e8%af%91" class="header-mark"&gt;&lt;/a&gt;编译&lt;/h2&gt;&lt;h3 id="aws-sdk-cpp" class="headerLink"&gt;
+ &lt;a href="#aws-sdk-cpp" class="header-mark"&gt;&lt;/a&gt;aws-sdk-cpp&lt;/h3&gt;&lt;blockquote&gt;
+ &lt;p&gt;此处建议使用rockset fork出来的仓库，因为aws官方仓库会不断更新，有可能导致rockset不兼容高版本sdk。&lt;/p&gt;</description></item></channel></rss>
