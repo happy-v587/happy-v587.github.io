@@ -1,8 +1,6 @@
 # RedisRaft - 使用说明
 
 
-## 关于使用
-
 从官方仓库看测试可以分为两大类：
 
 - 功能测试：即单元测试、集成测试，https://github.com/RedisLabs/redisraft/tree/master/tests

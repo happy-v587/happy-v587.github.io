@@ -1,9 +1,6 @@
 # RedisRaft - 集成测试说明
 
 
-## 关于 redisraft 集成测试说明
----
-
 ### 两个核心的类
 
 - 通过 `class RedisRaft` 将每个节点的 `init`、`start`、`restart`、`pause`、`join`、`transfer_leader`、`cleanup` 等行为进行管理（通过对 pylib subprocess 、redis cmd 的封装实现）

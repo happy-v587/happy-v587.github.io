@@ -1,12 +1,13 @@
 # RedisRaft - 混沌测试说明
 
 
-## 关于 jepsen-redisraft 的测试说明
----
+
 - redis-raft 仓库提供了基于 docker 的运行方式
 ![image](https://github.com/user-attachments/assets/05e2565c-1199-4bc8-a7a2-7ed8cce139d6)
 - 运行的代码存储在 https://github.com/redislabs/jepsen-redisraft
+
 ---
+
 ### 关于 jepsen-redisraft 仓库的说明
 
 <img width="359" alt="image" src="https://github.com/user-attachments/assets/3facf02b-77b2-4098-b520-46fa5efa8c8b">
