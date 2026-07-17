@@ -22,36 +22,45 @@
 <p>我们都知道，写文件之前需要先将文件open，然后才能写入。所以下文会先介绍manifest文件时怎么open的，然后说明一次变动是如何写入manifest文件中的。</p>]]></description></item><item><title>Kubernets 通过 CSI 创建盘、绑定到Pod的流程图</title><link>/kubernetes-tong-guo-csi-chuang-jian-pan-bang-ding-dao-pod-de-liu-cheng-tu/</link><pubDate>Thu, 13 Jun 2024 20:32:47 +0800</pubDate><author><name>happy-v587</name></author><guid>/kubernetes-tong-guo-csi-chuang-jian-pan-bang-ding-dao-pod-de-liu-cheng-tu/</guid><description><![CDATA[<blockquote>
   <p>本文由原作者归档自 CSDN，原文发布于 2024-06-13。原文链接：<a href="https://blog.csdn.net/LIUHUAN0520/article/details/139663624" target="_blank" rel="noopener noreferrer">Kubernets 通过 CSI 创建盘、绑定到Pod的流程图</a>。</p>
 
-</blockquote><p><img class="tw-inline" loading="lazy" src='/images/kubernetes-tong-guo-csi-chuang-jian-pan-bang-ding-dao-pod-de-liu-cheng-tu.md/img-01.png'   alt="图 1"  ></p>]]></description></item><item><title>编写你的第一个 Sysbench Lua Script</title><link>/first-sysbench-lua-script/</link><pubDate>Tue, 09 Apr 2024 15:52:12 +0800</pubDate><author><name>happy-v587</name></author><guid>/first-sysbench-lua-script/</guid><description><![CDATA[<h2 id="零sysbench-介绍" class="headerLink">
-    <a href="#%e9%9b%b6sysbench-%e4%bb%8b%e7%bb%8d" class="header-mark"></a>零、sysbench 介绍</h2><p>Sysbench 是一个开源的<span style="color: rgb(255, 76, 65);">多线程性能测试工具</span>。它提供了一系列的测试用例，用户<span style="color: rgb(255, 76, 65);">可以通过命令行参数自定义测试的各种方面，如线程数、测试时长、数据大小</span>等。</p>]]></description></item><item><title>TiDB Operator 自动扩缩容：TidbClusterAutoScaler 使用与实现</title><link>/tidbcluster-autoscaler-usage-and-implementation/</link><pubDate>Thu, 31 Aug 2023 19:00:00 +0800</pubDate><author><name>happy-v587</name></author><guid>/tidbcluster-autoscaler-usage-and-implementation/</guid><description><![CDATA[<h2 id="前言" class="headerLink">
-    <a href="#%e5%89%8d%e8%a8%80" class="header-mark"></a>前言</h2><p>在 Kubernetes 上运行 TiDB 时，最常见的运维动作之一就是扩缩容。TiDB 计算节点 TiDB 是无状态的，扩缩容相对简单；TiKV 存储节点涉及数据重分布，需要谨慎处理。</p>
-<p>TiDB Operator 里提供了一个叫 <code>TidbClusterAutoScaler</code> 的 CRD，试图让 TiDB 和 TiKV 的副本数根据负载自动调整。它支持两种决策方式：一种是把决策交给 PD，由 PD 根据集群负载给出扩缩容计划；另一种是调用外部服务，由用户自定义推荐副本数。</p>]]></description></item><item><title>TiDB 优雅关闭</title><link>/tidb-you-ya-guan-bi/</link><pubDate>Mon, 31 Jul 2023 20:28:19 +0800</pubDate><author><name>happy-v587</name></author><guid>/tidb-you-ya-guan-bi/</guid><description><![CDATA[<hr>
-<h2 id="背景" class="headerLink">
-    <a href="#%e8%83%8c%e6%99%af" class="header-mark"></a>背景</h2><p>今天使用tiup做实验的事后，将tidb节点从2个缩到1个，发现tiup返回成功但是tidb-server进程还在。</p>
-<p>这就引发的我的好奇心，why？</p>
-<h2 id="实验复现" class="headerLink">
-    <a href="#%e5%ae%9e%e9%aa%8c%e5%a4%8d%e7%8e%b0" class="header-mark"></a>实验复现</h2><h3 id="启动集群" class="headerLink">
-    <a href="#%e5%90%af%e5%8a%a8%e9%9b%86%e7%be%a4" class="header-mark"></a>启动集群</h3><div class="code-block highlight is-closed show-line-numbers  tw-group tw-my-2">
-  <div class="
-    
-    tw-flex 
-    tw-flex-row
-    tw-flex-1 
-    tw-justify-between 
-    tw-w-full tw-bg-bgColor-secondary
-    ">      
-    <button 
-      class="
-        code-block-button
-        tw-mx-2 
-        tw-flex
-        tw-flex-row
-        tw-flex-1"
-      aria-hidden="true">
-          <div class="group-[.is-open]:tw-rotate-90 tw-transition-[transform] tw-duration-500 tw-ease-in-out print:!tw-hidden tw-w-min tw-h-min tw-my-1 tw-mx-1"><svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></div>
-          <p class="tw-select-none !tw-my-1">bash</p>]]></description></item><item><title>TiProxy 原理和实现</title><link>/tiproxy-yuan-li-he-shi-xian/</link><pubDate>Sun, 30 Jul 2023 13:20:35 +0800</pubDate><author><name>happy-v587</name></author><guid>/tiproxy-yuan-li-he-shi-xian/</guid><description><![CDATA[<hr>
-<h2 id="说明" class="headerLink">
-    <a href="#%e8%af%b4%e6%98%8e" class="header-mark"></a>说明</h2><p>在上篇<a href="https://tidb.net/blog/bbf3f52d" target="_blank" rel="noopener noreferrer">《TiProxy 尝鲜》</a>中做了一些实验，比如加减tidb节点后tiproxy可以做到自动负载均衡，如果遇到会话有未提交的事务则等待事务结束才迁移。</p>]]></description></item><item><title>TiProxy 尝鲜</title><link>/try-tiproxy/</link><pubDate>Sat, 29 Jul 2023 22:09:11 +0800</pubDate><author><name>happy-v587</name></author><guid>/try-tiproxy/</guid><description><![CDATA[<hr>
-<h2 id="说明" class="headerLink">
-    <a href="#%e8%af%b4%e6%98%8e" class="header-mark"></a>说明</h2><p>最近发现 tidb 有个 <a href="https://github.com/pingcap/TiProxy" target="_blank" rel="noopener noreferrer">https://github.com/pingcap/TiProxy</a> 仓库，抱着好奇的心态想试试这个组件的使用效果。于是按照文档的介绍在本地环境使用tiup做了一些实验，现在将实验过程和实验结果分享给大家。</p>]]></description></item></channel></rss>
+</blockquote><p><img class="tw-inline" loading="lazy" src='/images/kubernetes-tong-guo-csi-chuang-jian-pan-bang-ding-dao-pod-de-liu-cheng-tu.md/img-01.png'   alt="图 1"  ></p>]]></description></item><item><title>RedisRaft - 单元测试说明</title><link>/redisraft-dan-yuan-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 12:43:04 +0000</pubDate><author><name>happy-v587</name></author><guid>/redisraft-dan-yuan-ce-shi-shuo-ming/</guid><description><![CDATA[<h2 id="关于单元测试的说明" class="headerLink">
+    <a href="#%e5%85%b3%e4%ba%8e%e5%8d%95%e5%85%83%e6%b5%8b%e8%af%95%e7%9a%84%e8%af%b4%e6%98%8e" class="header-mark"></a>关于单元测试的说明</h2><hr>
+<p>代码目录</p>
+<img width="399" alt="image" src="https://github.com/user-attachments/assets/5ca030a5-0489-42de-b18e-cf3bdd915919">
+<p>主要测试了：</p>
+<ul>
+<li>util（对parse_slots函数测试）</li>
+<li>file（对原生read、write、flush、get、sync的包裹）</li>
+<li>log（用来维护 raft log的实现）</li>
+<li>serialization（对 redis command 序列化与反序列化的测试）</li>
+</ul>
+<img width="453" alt="image" src="https://github.com/user-attachments/assets/96f836f4-0807-4d75-b3ea-4181c7a513b5">]]></description></item><item><title>RedisRaft - 混沌测试说明</title><link>/redisraft-jepsen-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 20:42:43 +0800</pubDate><author><name>happy-v587</name></author><guid>/redisraft-jepsen-ce-shi-shuo-ming/</guid><description><![CDATA[<h2 id="关于-jepsen-redisraft-的测试说明" class="headerLink">
+    <a href="#%e5%85%b3%e4%ba%8e-jepsen-redisraft-%e7%9a%84%e6%b5%8b%e8%af%95%e8%af%b4%e6%98%8e" class="header-mark"></a>关于 jepsen-redisraft 的测试说明</h2><hr>
+<ul>
+<li>redis-raft 仓库提供了基于 docker 的运行方式
+<img class="tw-inline" loading="lazy" src='https://github.com/user-attachments/assets/05e2565c-1199-4bc8-a7a2-7ed8cce139d6'   alt="image"  ></li>
+<li>运行的代码存储在 <a href="https://github.com/redislabs/jepsen-redisraft" target="_blank" rel="noopener noreferrer">https://github.com/redislabs/jepsen-redisraft</a></li>
+</ul>
+<hr>
+<h3 id="关于-jepsen-redisraft-仓库的说明" class="headerLink">
+    <a href="#%e5%85%b3%e4%ba%8e-jepsen-redisraft-%e4%bb%93%e5%ba%93%e7%9a%84%e8%af%b4%e6%98%8e" class="header-mark"></a>关于 jepsen-redisraft 仓库的说明</h3><img width="359" alt="image" src="https://github.com/user-attachments/assets/3facf02b-77b2-4098-b520-46fa5efa8c8b">
+<p>0、程序入口</p>
+<pre><code>在 project.clj 中定义了 `:main jepsen.redis.core`
+然后打开 `src/jepsen.readis/core.clj` 文件
+找到文件最后 `defn -main` 即为入口
+</code></pre>
+<p>1、【编译】如何编译 redis、redis-raft</p>]]></description></item><item><title>RedisRaft - 集成测试说明</title><link>/redisraft-ji-cheng-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 12:21:44 +0000</pubDate><author><name>happy-v587</name></author><guid>/redisraft-ji-cheng-ce-shi-shuo-ming/</guid><description><![CDATA[<h2 id="关于-redisraft-集成测试说明" class="headerLink">
+    <a href="#%e5%85%b3%e4%ba%8e-redisraft-%e9%9b%86%e6%88%90%e6%b5%8b%e8%af%95%e8%af%b4%e6%98%8e" class="header-mark"></a>关于 redisraft 集成测试说明</h2><hr>
+<h3 id="两个核心的类" class="headerLink">
+    <a href="#%e4%b8%a4%e4%b8%aa%e6%a0%b8%e5%bf%83%e7%9a%84%e7%b1%bb" class="header-mark"></a>两个核心的类</h3><ul>
+<li>通过 <code>class RedisRaft</code> 将每个节点的 <code>init</code>、<code>start</code>、<code>restart</code>、<code>pause</code>、<code>join</code>、<code>transfer_leader</code>、<code>cleanup</code> 等行为进行管理（通过对 pylib subprocess 、redis cmd 的封装实现）</li>
+<li>通过 <code>class Cluster</code> 将多个 <code>RedisRaft</code> 进行管理，包括集群的 <code>create</code>、<code>add_node</code>、<code>remove_node</code>、<code>pause_leader</code> 等行为（通过对redis cmd、RedisRaft类的封装实现）</li>
+</ul>
+<p>有上面两个给力的 <code>class</code> 后，在执行测试case时对集群的生命周期管理就变得非常简单了。</p>]]></description></item><item><title>RedisRaft - 使用说明</title><link>/redisraft-jepsen-guan-yu-shi-yong/</link><pubDate>Sun, 14 Apr 2024 06:33:51 +0000</pubDate><author><name>happy-v587</name></author><guid>/redisraft-jepsen-guan-yu-shi-yong/</guid><description><![CDATA[<h2 id="关于使用" class="headerLink">
+    <a href="#%e5%85%b3%e4%ba%8e%e4%bd%bf%e7%94%a8" class="header-mark"></a>关于使用</h2><p>从官方仓库看测试可以分为两大类：</p>
+<ul>
+<li>功能测试：即单元测试、集成测试，https://github.com/RedisLabs/redisraft/tree/master/tests</li>
+<li>正确性测试：即混动工程测试，https://github.com/RedisLabs/redisraft/tree/master/jepsen</li>
+</ul>
+<h2 id="一功能测试" class="headerLink">
+    <a href="#%e4%b8%80%e5%8a%9f%e8%83%bd%e6%b5%8b%e8%af%95" class="header-mark"></a>一、功能测试</h2><p>基于docker运行测试case</p>]]></description></item><item><title>编写你的第一个 Sysbench Lua Script</title><link>/first-sysbench-lua-script/</link><pubDate>Tue, 09 Apr 2024 15:52:12 +0800</pubDate><author><name>happy-v587</name></author><guid>/first-sysbench-lua-script/</guid><description><![CDATA[<h2 id="零sysbench-介绍" class="headerLink">
+    <a href="#%e9%9b%b6sysbench-%e4%bb%8b%e7%bb%8d" class="header-mark"></a>零、sysbench 介绍</h2><p>Sysbench 是一个开源的<span style="color: rgb(255, 76, 65);">多线程性能测试工具</span>。它提供了一系列的测试用例，用户<span style="color: rgb(255, 76, 65);">可以通过命令行参数自定义测试的各种方面，如线程数、测试时长、数据大小</span>等。</p>]]></description></item></channel></rss>

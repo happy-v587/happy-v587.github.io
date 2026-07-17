@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jepsen on C4H</title><link>/tags/jepsen/</link><description>Recent content in Jepsen on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Wed, 17 Apr 2024 20:42:43 +0800</lastBuildDate><atom:link href="/tags/jepsen/index.xml" rel="self" type="application/rss+xml"/><item><title>RedisRaft - 混沌测试说明</title><link>/redisraft-jepsen-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 20:42:43 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/redisraft-jepsen-ce-shi-shuo-ming/</guid><description>&lt;h2 id="关于-jepsen-redisraft-的测试说明" class="headerLink"&gt;
+ &lt;a href="#%e5%85%b3%e4%ba%8e-jepsen-redisraft-%e7%9a%84%e6%b5%8b%e8%af%95%e8%af%b4%e6%98%8e" class="header-mark"&gt;&lt;/a&gt;关于 jepsen-redisraft 的测试说明&lt;/h2&gt;&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;redis-raft 仓库提供了基于 docker 的运行方式
+&lt;img class="tw-inline" loading="lazy" src='https://github.com/user-attachments/assets/05e2565c-1199-4bc8-a7a2-7ed8cce139d6' alt="image" &gt;&lt;/li&gt;
+&lt;li&gt;运行的代码存储在 &lt;a href="https://github.com/redislabs/jepsen-redisraft" target="_blank" rel="noopener noreferrer"&gt;https://github.com/redislabs/jepsen-redisraft&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="关于-jepsen-redisraft-仓库的说明" class="headerLink"&gt;
+ &lt;a href="#%e5%85%b3%e4%ba%8e-jepsen-redisraft-%e4%bb%93%e5%ba%93%e7%9a%84%e8%af%b4%e6%98%8e" class="header-mark"&gt;&lt;/a&gt;关于 jepsen-redisraft 仓库的说明&lt;/h3&gt;&lt;img width="359" alt="image" src="https://github.com/user-attachments/assets/3facf02b-77b2-4098-b520-46fa5efa8c8b"&gt;
+&lt;p&gt;0、程序入口&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;在 project.clj 中定义了 `:main jepsen.redis.core`
+然后打开 `src/jepsen.readis/core.clj` 文件
+找到文件最后 `defn -main` 即为入口
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;1、【编译】如何编译 redis、redis-raft&lt;/p&gt;</description></item><item><title>RedisRaft - 使用说明</title><link>/redisraft-jepsen-guan-yu-shi-yong/</link><pubDate>Sun, 14 Apr 2024 06:33:51 +0000</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/redisraft-jepsen-guan-yu-shi-yong/</guid><description>&lt;h2 id="关于使用" class="headerLink"&gt;
+ &lt;a href="#%e5%85%b3%e4%ba%8e%e4%bd%bf%e7%94%a8" class="header-mark"&gt;&lt;/a&gt;关于使用&lt;/h2&gt;&lt;p&gt;从官方仓库看测试可以分为两大类：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;功能测试：即单元测试、集成测试，https://github.com/RedisLabs/redisraft/tree/master/tests&lt;/li&gt;
+&lt;li&gt;正确性测试：即混动工程测试，https://github.com/RedisLabs/redisraft/tree/master/jepsen&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="一功能测试" class="headerLink"&gt;
+ &lt;a href="#%e4%b8%80%e5%8a%9f%e8%83%bd%e6%b5%8b%e8%af%95" class="header-mark"&gt;&lt;/a&gt;一、功能测试&lt;/h2&gt;&lt;p&gt;基于docker运行测试case&lt;/p&gt;</description></item></channel></rss>
