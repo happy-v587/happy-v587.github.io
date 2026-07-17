@@ -19,7 +19,10 @@
 
 </blockquote><h2 id="零说明" class="headerLink">
     <a href="#%e9%9b%b6%e8%af%b4%e6%98%8e" class="header-mark"></a>零、说明</h2><p>manifest文件是rocksdb用来管理元信息变动的文件。文件中以VersionEdit为单位。记录了所有SST文件的创建、删除、层级调整等变动行为。</p>
-<p>我们都知道，写文件之前需要先将文件open，然后才能写入。所以下文会先介绍manifest文件时怎么open的，然后说明一次变动是如何写入manifest文件中的。</p>]]></description></item><item><title>编写你的第一个 Sysbench Lua Script</title><link>/first-sysbench-lua-script/</link><pubDate>Tue, 09 Apr 2024 15:52:12 +0800</pubDate><author><name>happy-v587</name></author><guid>/first-sysbench-lua-script/</guid><description><![CDATA[<h2 id="零sysbench-介绍" class="headerLink">
+<p>我们都知道，写文件之前需要先将文件open，然后才能写入。所以下文会先介绍manifest文件时怎么open的，然后说明一次变动是如何写入manifest文件中的。</p>]]></description></item><item><title>Kubernets 通过 CSI 创建盘、绑定到Pod的流程图</title><link>/kubernetes-tong-guo-csi-chuang-jian-pan-bang-ding-dao-pod-de-liu-cheng-tu/</link><pubDate>Thu, 13 Jun 2024 20:32:47 +0800</pubDate><author><name>happy-v587</name></author><guid>/kubernetes-tong-guo-csi-chuang-jian-pan-bang-ding-dao-pod-de-liu-cheng-tu/</guid><description><![CDATA[<blockquote>
+  <p>本文由原作者归档自 CSDN，原文发布于 2024-06-13。原文链接：<a href="https://blog.csdn.net/LIUHUAN0520/article/details/139663624" target="_blank" rel="noopener noreferrer">Kubernets 通过 CSI 创建盘、绑定到Pod的流程图</a>。</p>
+
+</blockquote><p><img class="tw-inline" loading="lazy" src='/images/kubernetes-tong-guo-csi-chuang-jian-pan-bang-ding-dao-pod-de-liu-cheng-tu.md/img-01.png'   alt="图 1"  ></p>]]></description></item><item><title>编写你的第一个 Sysbench Lua Script</title><link>/first-sysbench-lua-script/</link><pubDate>Tue, 09 Apr 2024 15:52:12 +0800</pubDate><author><name>happy-v587</name></author><guid>/first-sysbench-lua-script/</guid><description><![CDATA[<h2 id="零sysbench-介绍" class="headerLink">
     <a href="#%e9%9b%b6sysbench-%e4%bb%8b%e7%bb%8d" class="header-mark"></a>零、sysbench 介绍</h2><p>Sysbench 是一个开源的<span style="color: rgb(255, 76, 65);">多线程性能测试工具</span>。它提供了一系列的测试用例，用户<span style="color: rgb(255, 76, 65);">可以通过命令行参数自定义测试的各种方面，如线程数、测试时长、数据大小</span>等。</p>]]></description></item><item><title>TiDB Operator 自动扩缩容：TidbClusterAutoScaler 使用与实现</title><link>/tidbcluster-autoscaler-usage-and-implementation/</link><pubDate>Thu, 31 Aug 2023 19:00:00 +0800</pubDate><author><name>happy-v587</name></author><guid>/tidbcluster-autoscaler-usage-and-implementation/</guid><description><![CDATA[<h2 id="前言" class="headerLink">
     <a href="#%e5%89%8d%e8%a8%80" class="header-mark"></a>前言</h2><p>在 Kubernetes 上运行 TiDB 时，最常见的运维动作之一就是扩缩容。TiDB 计算节点 TiDB 是无状态的，扩缩容相对简单；TiKV 存储节点涉及数据重分布，需要谨慎处理。</p>
 <p>TiDB Operator 里提供了一个叫 <code>TidbClusterAutoScaler</code> 的 CRD，试图让 TiDB 和 TiKV 的副本数根据负载自动调整。它支持两种决策方式：一种是把决策交给 PD，由 PD 根据集群负载给出扩缩容计划；另一种是调用外部服务，由用户自定义推荐副本数。</p>]]></description></item><item><title>TiDB 优雅关闭</title><link>/tidb-you-ya-guan-bi/</link><pubDate>Mon, 31 Jul 2023 20:28:19 +0800</pubDate><author><name>happy-v587</name></author><guid>/tidb-you-ya-guan-bi/</guid><description><![CDATA[<hr>
@@ -51,26 +54,4 @@
 <h2 id="说明" class="headerLink">
     <a href="#%e8%af%b4%e6%98%8e" class="header-mark"></a>说明</h2><p>在上篇<a href="https://tidb.net/blog/bbf3f52d" target="_blank" rel="noopener noreferrer">《TiProxy 尝鲜》</a>中做了一些实验，比如加减tidb节点后tiproxy可以做到自动负载均衡，如果遇到会话有未提交的事务则等待事务结束才迁移。</p>]]></description></item><item><title>TiProxy 尝鲜</title><link>/try-tiproxy/</link><pubDate>Sat, 29 Jul 2023 22:09:11 +0800</pubDate><author><name>happy-v587</name></author><guid>/try-tiproxy/</guid><description><![CDATA[<hr>
 <h2 id="说明" class="headerLink">
-    <a href="#%e8%af%b4%e6%98%8e" class="header-mark"></a>说明</h2><p>最近发现 tidb 有个 <a href="https://github.com/pingcap/TiProxy" target="_blank" rel="noopener noreferrer">https://github.com/pingcap/TiProxy</a> 仓库，抱着好奇的心态想试试这个组件的使用效果。于是按照文档的介绍在本地环境使用tiup做了一些实验，现在将实验过程和实验结果分享给大家。</p>]]></description></item><item><title>bitpoke/mysql-operator 技术解读系列 - 部署</title><link>/mysql-operator-1-%E9%83%A8%E7%BD%B2/</link><pubDate>Sun, 12 Mar 2023 19:33:20 +0800</pubDate><author><name>happy-v587</name></author><guid>/mysql-operator-1-%E9%83%A8%E7%BD%B2/</guid><description><![CDATA[<hr>
-<h2 id="mysql-operator-chart-说明" class="headerLink">
-    <a href="#mysql-operator-chart-%e8%af%b4%e6%98%8e" class="header-mark"></a>mysql-operator chart 说明</h2><p>安装 mysql-operator 的操作命令在<a href="https://github.com/bitpoke/mysql-operator#controller-deploy" target="_blank" rel="noopener noreferrer">官方仓库</a>和<a href="https://www.bitpoke.io/docs/mysql-operator/getting-started/" target="_blank" rel="noopener noreferrer">官网</a>都有说明，具体安装命令如下：</p>
-<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
-  <div class="
-    
-    tw-flex 
-    tw-flex-row
-    tw-flex-1 
-    tw-justify-between 
-    tw-w-full tw-bg-bgColor-secondary
-    ">      
-    <button 
-      class="
-        code-block-button
-        tw-mx-2 
-        tw-flex
-        tw-flex-row
-        tw-flex-1"
-      aria-hidden="true">
-          <div class="group-[.is-open]:tw-rotate-90 tw-transition-[transform] tw-duration-500 tw-ease-in-out print:!tw-hidden tw-w-min tw-h-min tw-my-1 tw-mx-1"><svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></div>
-          <p class="tw-select-none !tw-my-1">bash</p>]]></description></item></channel></rss>
+    <a href="#%e8%af%b4%e6%98%8e" class="header-mark"></a>说明</h2><p>最近发现 tidb 有个 <a href="https://github.com/pingcap/TiProxy" target="_blank" rel="noopener noreferrer">https://github.com/pingcap/TiProxy</a> 仓库，抱着好奇的心态想试试这个组件的使用效果。于是按照文档的介绍在本地环境使用tiup做了一些实验，现在将实验过程和实验结果分享给大家。</p>]]></description></item></channel></rss>

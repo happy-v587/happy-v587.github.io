@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Limit on C4H</title><link>/tags/limit/</link><description>Recent content in Limit on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Tue, 16 Mar 2021 13:14:07 +0800</lastBuildDate><atom:link href="/tags/limit/index.xml" rel="self" type="application/rss+xml"/><item><title>mysql limit offset 原理分析与使用</title><link>/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/</link><pubDate>Tue, 16 Mar 2021 13:14:07 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自 CSDN，原文发布于 2021-03-16。原文链接：&lt;a href="https://blog.csdn.net/LIUHUAN0520/article/details/114869738" target="_blank" rel="noopener noreferrer"&gt;mysql limit offset 原理分析与使用&lt;/a&gt;。&lt;/p&gt;
+
+&lt;/blockquote&gt;&lt;h2 id="背景" class="headerLink"&gt;
+ &lt;a href="#%e8%83%8c%e6%99%af" class="header-mark"&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;一个行数为4亿条的表。&lt;/p&gt;
+&lt;p&gt;&lt;img class="tw-inline" loading="lazy" src='/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-01.png' alt="图 1" &gt;&lt;/p&gt;
+&lt;p&gt;查询50000000~50000010行之间的数据。发现查询时间达到20s！！！&lt;/p&gt;</description></item></channel></rss>

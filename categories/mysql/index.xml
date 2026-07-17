@@ -3,7 +3,17 @@
 
 &lt;/blockquote&gt;&lt;h2 id="mysql-的-rr-到底有没有解决幻读" class="headerLink"&gt;
  &lt;a href="#mysql-%e7%9a%84-rr-%e5%88%b0%e5%ba%95%e6%9c%89%e6%b2%a1%e6%9c%89%e8%a7%a3%e5%86%b3%e5%b9%bb%e8%af%bb" class="header-mark"&gt;&lt;/a&gt;MySQL 的 RR 到底有没有解决幻读？&lt;/h2&gt;&lt;p&gt;关于数据库隔离级别，有一个流传很多年的结论：Read Committed 解决脏读，Repeatable Read 解决不可重复读，Serializable 解决幻读。&lt;/p&gt;</description></item><item><title>MaxScale不支持MySQL8.0的问题</title><link>/maxscale-bu-zhi-chi-mysql8-0-de-wen-ti/</link><pubDate>Wed, 19 Jan 2022 11:42:09 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/maxscale-bu-zhi-chi-mysql8-0-de-wen-ti/</guid><description>&lt;blockquote&gt;
- &lt;p&gt;本文由原作者归档自 CSDN，原文发布于 2022-01-19。原文链接：&lt;a href="https://blog.csdn.net/LIUHUAN0520/article/details/122576280" target="_blank" rel="noopener noreferrer"&gt;MaxScale不支持MySQL8.0的问题&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>mysqldump引发数据库不可读写的血案</title><link>/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/</link><pubDate>Tue, 26 Jan 2021 13:01:38 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自 CSDN，原文发布于 2022-01-19。原文链接：&lt;a href="https://blog.csdn.net/LIUHUAN0520/article/details/122576280" target="_blank" rel="noopener noreferrer"&gt;MaxScale不支持MySQL8.0的问题&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>mysql limit offset 原理分析与使用</title><link>/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/</link><pubDate>Tue, 16 Mar 2021 13:14:07 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自 CSDN，原文发布于 2021-03-16。原文链接：&lt;a href="https://blog.csdn.net/LIUHUAN0520/article/details/114869738" target="_blank" rel="noopener noreferrer"&gt;mysql limit offset 原理分析与使用&lt;/a&gt;。&lt;/p&gt;
+
+&lt;/blockquote&gt;&lt;h2 id="背景" class="headerLink"&gt;
+ &lt;a href="#%e8%83%8c%e6%99%af" class="header-mark"&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;一个行数为4亿条的表。&lt;/p&gt;
+&lt;p&gt;&lt;img class="tw-inline" loading="lazy" src='/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-01.png' alt="图 1" &gt;&lt;/p&gt;
+&lt;p&gt;查询50000000~50000010行之间的数据。发现查询时间达到20s！！！&lt;/p&gt;</description></item><item><title>mysql异步复制、半同步复制、组复制</title><link>/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/</link><pubDate>Wed, 03 Mar 2021 20:51:04 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/</guid><description>&lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自 CSDN，原文发布于 2021-03-03。原文链接：&lt;a href="https://blog.csdn.net/LIUHUAN0520/article/details/114334101" target="_blank" rel="noopener noreferrer"&gt;mysql异步复制、半同步复制、组复制&lt;/a&gt;。&lt;/p&gt;
+
+&lt;/blockquote&gt;&lt;h2 id="异步复制" class="headerLink"&gt;
+ &lt;a href="#%e5%bc%82%e6%ad%a5%e5%a4%8d%e5%88%b6" class="header-mark"&gt;&lt;/a&gt;异步复制&lt;/h2&gt;&lt;p&gt;sorce不管replica的死活，写进binlog后，commit完成就算成功。如果最后一个event没有发给replica，主库就挂了，那么就会有丢失数据的风险。 &lt;img class="tw-inline" loading="lazy" src='/images/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi.md/img-01.png' alt="图 1" &gt;&lt;/p&gt;</description></item><item><title>mysqldump引发数据库不可读写的血案</title><link>/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/</link><pubDate>Tue, 26 Jan 2021 13:01:38 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/</guid><description>&lt;blockquote&gt;
  &lt;p&gt;本文由原作者归档自知乎，原文发布于 2021-01-26。原文链接：&lt;a href="https://zhuanlan.zhihu.com/p/347105199" target="_blank" rel="noopener noreferrer"&gt;mysqldump引发数据库不可读写的血案&lt;/a&gt;。&lt;/p&gt;
 
 &lt;/blockquote&gt;&lt;h2 id="问题" class="headerLink"&gt;
