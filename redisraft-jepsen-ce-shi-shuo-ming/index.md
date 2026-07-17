@@ -3,14 +3,14 @@
 
 
 - redis-raft 仓库提供了基于 docker 的运行方式
-![image](https://github.com/user-attachments/assets/05e2565c-1199-4bc8-a7a2-7ed8cce139d6)
+![image](/images/redisraft-jepsen-ce-shi-shuo-ming.md/img-01.png)
 - 运行的代码存储在 https://github.com/redislabs/jepsen-redisraft
 
 ---
 
 ### 关于 jepsen-redisraft 仓库的说明
 
-<img width="359" alt="image" src="https://github.com/user-attachments/assets/3facf02b-77b2-4098-b520-46fa5efa8c8b">
+<img width="359" alt="image" src="/images/redisraft-jepsen-ce-shi-shuo-ming.md/img-02.png">
 
 0、程序入口
 
@@ -62,7 +62,7 @@
 
 https://blog.csdn.net/FL63Zv9Zou86950w/article/details/117457782
 
-![image](https://github.com/user-attachments/assets/eaa52005-2098-4add-989e-26b18af08e75)
+![image](/images/redisraft-jepsen-ce-shi-shuo-ming.md/img-03.png)
   
 以分布式数据库集群为例，Jepsen的工作大致包含以下几步：
 
@@ -126,6 +126,5 @@ JSON -> EDN 文件格式转换：https://github.com/borkdude/jet
     {:type :invoke, :f :txn, :value [[:r 1 nil]]} 
     {:type :invoke, :f :txn, :value [[:append 2 5]]} 
     {:type :invoke, :f :txn, :value [[:append 2 6] [:r 0 nil]]}
-
 
 

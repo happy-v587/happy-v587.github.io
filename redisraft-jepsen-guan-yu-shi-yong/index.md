@@ -53,11 +53,11 @@ make tests
 
 测试结果
 - 集成测试
-![image](https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/719a386a-5409-4731-ae4c-443f0783d2d2)
-![image](https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/374bed15-1ae0-404a-bf31-d3d9951947ee)
+![image](/images/redisraft-jepsen-guan-yu-shi-yong.md/img-01.png)
+![image](/images/redisraft-jepsen-guan-yu-shi-yong.md/img-02.png)
 - 单元测试
-![image](https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/6d2a33da-2b12-4858-aea9-dcd5ad6c037c)
-![image](https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/363cbdc8-fae0-4b92-9dab-05060ed3c232)
+![image](/images/redisraft-jepsen-guan-yu-shi-yong.md/img-03.png)
+![image](/images/redisraft-jepsen-guan-yu-shi-yong.md/img-04.png)
 - 详细日志
 [test.log](https://github.com/OpenAtomFoundation/pikiwidb-raft/files/14996692/test.log)
 
@@ -97,27 +97,26 @@ docker exec -w /jepsen jepsen-control \
 
 执行完前四个命令行后会发现启动了如下容器：
 
-<img width="1061" alt="image" src="https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/b10ad6bc-86a7-4db0-bce2-3b4f6e900a05">
+<img width="1061" alt="image" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-05.png">
 
 查看Dockerfile脚本发现，在 control 容器中你实际是部署了 https://github.com/redislabs/jepsen-redisraft ，这个仓库是使用Clojure编写的、基于jepsen的、用来测试redisraft的工具。
 
 运行起来后可以通过网页 http://127.0.0.1:8080/ 查看
 
 - 运行记录
-<img width="1272" alt="image" src="https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/91627422-5fcf-475b-b6cf-4c2d98bf5599">
+<img width="1272" alt="image" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-06.png">
 
 - 某次运行详细信息（每个文件功能待分析）
-<img width="1624" alt="image" src="https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/ec91a382-fb82-4841-99f6-1cf5f0d0e467">
+<img width="1624" alt="image" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-07.png">
 
 - 得益于jepsen-redisraft，下载、编译、启动、读写数据、验证数据等操作都可以自动化完成
-<img width="1791" alt="image" src="https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/f422983b-4439-4d5e-9166-5f80f72de676">
-<img src="https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/2686702a-b533-4db8-a232-d0cb405cc4d6">
+<img width="1791" alt="image" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-08.png">
+<img src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-09.png">
 
 
 ### 2.3 参考
 - https://www.leviathan.vip/2018/05/15/Jepsen%E7%9A%84%E4%BD%BF%E7%94%A8%E4%B8%8E%E7%BA%BF%E6%80%A7%E4%B8%80%E8%87%B4%E6%80%A7/
 - https://www.liaoxuefeng.com/article/986637181910336
-
 
 
 

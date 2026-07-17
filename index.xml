@@ -23,7 +23,7 @@
   <p>本文由原作者归档自 CSDN，原文发布于 2024-06-13。原文链接：<a href="https://blog.csdn.net/LIUHUAN0520/article/details/139663624" target="_blank" rel="noopener noreferrer">Kubernets 通过 CSI 创建盘、绑定到Pod的流程图</a>。</p>
 
 </blockquote><p><img class="tw-inline" loading="lazy" src='/images/kubernetes-tong-guo-csi-chuang-jian-pan-bang-ding-dao-pod-de-liu-cheng-tu.md/img-01.png'   alt="图 1"  ></p>]]></description></item><item><title>RedisRaft - 单元测试说明</title><link>/redisraft-dan-yuan-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 12:43:04 +0000</pubDate><author><name>happy-v587</name></author><guid>/redisraft-dan-yuan-ce-shi-shuo-ming/</guid><description><![CDATA[<p>代码目录</p>
-<img width="399" alt="image" src="https://github.com/user-attachments/assets/5ca030a5-0489-42de-b18e-cf3bdd915919">
+<img width="399" alt="image" src="/images/redisraft-dan-yuan-ce-shi-shuo-ming.md/img-01.png">
 <p>主要测试了：</p>
 <ul>
 <li>util（对parse_slots函数测试）</li>
@@ -31,14 +31,14 @@
 <li>log（用来维护 raft log的实现）</li>
 <li>serialization（对 redis command 序列化与反序列化的测试）</li>
 </ul>
-<img width="453" alt="image" src="https://github.com/user-attachments/assets/96f836f4-0807-4d75-b3ea-4181c7a513b5">]]></description></item><item><title>RedisRaft - 混沌测试说明</title><link>/redisraft-jepsen-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 20:42:43 +0800</pubDate><author><name>happy-v587</name></author><guid>/redisraft-jepsen-ce-shi-shuo-ming/</guid><description><![CDATA[<ul>
+<img width="453" alt="image" src="/images/redisraft-dan-yuan-ce-shi-shuo-ming.md/img-02.png">]]></description></item><item><title>RedisRaft - 混沌测试说明</title><link>/redisraft-jepsen-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 20:42:43 +0800</pubDate><author><name>happy-v587</name></author><guid>/redisraft-jepsen-ce-shi-shuo-ming/</guid><description><![CDATA[<ul>
 <li>redis-raft 仓库提供了基于 docker 的运行方式
-<img class="tw-inline" loading="lazy" src='https://github.com/user-attachments/assets/05e2565c-1199-4bc8-a7a2-7ed8cce139d6'   alt="image"  ></li>
+<img class="tw-inline" loading="lazy" src='/images/redisraft-jepsen-ce-shi-shuo-ming.md/img-01.png'   alt="image"  ></li>
 <li>运行的代码存储在 <a href="https://github.com/redislabs/jepsen-redisraft" target="_blank" rel="noopener noreferrer">https://github.com/redislabs/jepsen-redisraft</a></li>
 </ul>
 <hr>
 <h3 id="关于-jepsen-redisraft-仓库的说明" class="headerLink">
-    <a href="#%e5%85%b3%e4%ba%8e-jepsen-redisraft-%e4%bb%93%e5%ba%93%e7%9a%84%e8%af%b4%e6%98%8e" class="header-mark"></a>关于 jepsen-redisraft 仓库的说明</h3><img width="359" alt="image" src="https://github.com/user-attachments/assets/3facf02b-77b2-4098-b520-46fa5efa8c8b">
+    <a href="#%e5%85%b3%e4%ba%8e-jepsen-redisraft-%e4%bb%93%e5%ba%93%e7%9a%84%e8%af%b4%e6%98%8e" class="header-mark"></a>关于 jepsen-redisraft 仓库的说明</h3><img width="359" alt="image" src="/images/redisraft-jepsen-ce-shi-shuo-ming.md/img-02.png">
 <p>0、程序入口</p>
 <pre><code>在 project.clj 中定义了 `:main jepsen.redis.core`
 然后打开 `src/jepsen.readis/core.clj` 文件

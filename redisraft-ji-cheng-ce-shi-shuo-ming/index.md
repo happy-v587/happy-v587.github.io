@@ -13,11 +13,10 @@
 对于每个测试case而言，只需要初始化一个 `cluster`，然后根据需要 `add_node`、`remove_node`；根据需要做 `set key`、`get key` 等操作；根据需要做 `raft COMPACT`等各种操作
 
 - 比如想要测试 raft snapshot 功能是否可以，其中一个case实现是：先启动一个 node 写些数据，然后 raft compact，之后在启动一个新 node，从这个新node查数据，验证是否存在
-![image](https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/c724b2c9-7a9b-4050-82a9-f07f5b83c8f8)
+![image](/images/redisraft-ji-cheng-ce-shi-shuo-ming.md/img-01.png)
 
 - 比如想要测试 raft membership 功能是否稳定，其中一个case实现是：先创建一个3节点的集群，删掉1号节点，通过2号节点查询节点数是否变成2
-![image](https://github.com/OpenAtomFoundation/pikiwidb-raft/assets/20750625/9da23ddf-d3d0-4a61-962a-c6113c572b2a)
+![image](/images/redisraft-ji-cheng-ce-shi-shuo-ming.md/img-02.png)
 
 从测试case看，redisraft 主要从上层去关注集群状态是否符合预期。而且这些操作都是通过 raft cmd 去完成
-
 
