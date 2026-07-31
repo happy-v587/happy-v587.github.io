@@ -2,7 +2,11 @@
   <p>本文由原作者归档自知乎，原文发布于 2026-06-15。原文链接：<a href="https://zhuanlan.zhihu.com/p/2049918197281952379" target="_blank" rel="noopener noreferrer">MySQL 的 RR 到底有没有解决幻读</a>。</p>
 
 </blockquote><h2 id="mysql-的-rr-到底有没有解决幻读" class="headerLink">
-    <a href="#mysql-%e7%9a%84-rr-%e5%88%b0%e5%ba%95%e6%9c%89%e6%b2%a1%e6%9c%89%e8%a7%a3%e5%86%b3%e5%b9%bb%e8%af%bb" class="header-mark"></a>MySQL 的 RR 到底有没有解决幻读？</h2><p>关于数据库隔离级别，有一个流传很多年的结论：Read Committed 解决脏读，Repeatable Read 解决不可重复读，Serializable 解决幻读。</p>]]></description></item><item><title>恭喜，聪明的你发明了RocksDB的主从复制</title><link>/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/</link><pubDate>Mon, 06 Jan 2025 17:23:00 +0800</pubDate><author><name>happy-v587</name></author><guid>/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/</guid><description><![CDATA[<blockquote>
+    <a href="#mysql-%e7%9a%84-rr-%e5%88%b0%e5%ba%95%e6%9c%89%e6%b2%a1%e6%9c%89%e8%a7%a3%e5%86%b3%e5%b9%bb%e8%af%bb" class="header-mark"></a>MySQL 的 RR 到底有没有解决幻读？</h2><p>关于数据库隔离级别，有一个流传很多年的结论：Read Committed 解决脏读，Repeatable Read 解决不可重复读，Serializable 解决幻读。</p>]]></description></item><item><title>读写分离后为什么会读到旧数据：MaxScale 的一致性读</title><link>/maxscale-mariadb-consistency-read/</link><pubDate>Mon, 29 Dec 2025 00:00:00 +0800</pubDate><author><name>happy-v587</name></author><guid>/maxscale-mariadb-consistency-read/</guid><description><![CDATA[<h2 id="问题" class="headerLink">
+    <a href="#%e9%97%ae%e9%a2%98" class="header-mark"></a>问题</h2><p>读写分离最容易让人困惑的一幕是：写请求已经返回成功，紧接着发起查询，却没有看到刚写入的数据。这里不一定是事务没有提交，而是写落在主库后，读被路由到了尚未追上复制进度的副本。</p>
+<p>那么，有什么办法可以解决这个问题呢？那就是本文要分析的 MaxScale，它解决了这个问题。</p>
+<h2 id="maxscale-的解决方案" class="headerLink">
+    <a href="#maxscale-%e7%9a%84%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark"></a>MaxScale 的解决方案</h2><p>MaxScale 的一致性读思路是把“这次写已经产生到哪里”的 GTID 获取到，再让之后的读请求以这个位置为边界：要么等待只读节点追上，要么直接选择已经追上的只读节点。</p>]]></description></item><item><title>恭喜，聪明的你发明了RocksDB的主从复制</title><link>/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/</link><pubDate>Mon, 06 Jan 2025 17:23:00 +0800</pubDate><author><name>happy-v587</name></author><guid>/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/</guid><description><![CDATA[<blockquote>
   <p>本文由原作者归档自微信公众号「两分钟好奇心」，原文发布于 2025-01-06。原文链接：<a href="https://mp.weixin.qq.com/s/YprloMHlrn0Nji92xxPaJg" target="_blank" rel="noopener noreferrer">恭喜，聪明的你发明了RocksDB的主从复制</a>。</p>]]></description></item><item><title>从 TiDB 学习分布式数据库测试</title><link>/learn-distributed-system-testing-from-tidb/</link><pubDate>Mon, 30 Dec 2024 15:45:19 +0800</pubDate><author><name>happy-v587</name></author><guid>/learn-distributed-system-testing-from-tidb/</guid><description><![CDATA[<h2 id="前言" class="headerLink">
     <a href="#%e5%89%8d%e8%a8%80" class="header-mark"></a>前言</h2><p>最近在研究数据库正确性测试相关的内容，恰好看到TiDB数据库在这方面的工作，很受启发，故写此文章。</p>
 <p>推荐下一些TiDB官方好文章：</p>
@@ -55,5 +59,4 @@
 <li>正确性测试：即混动工程测试，https://github.com/RedisLabs/redisraft/tree/master/jepsen</li>
 </ul>
 <h2 id="一功能测试" class="headerLink">
-    <a href="#%e4%b8%80%e5%8a%9f%e8%83%bd%e6%b5%8b%e8%af%95" class="header-mark"></a>一、功能测试</h2><p>基于docker运行测试case</p>]]></description></item><item><title>编写你的第一个 Sysbench Lua Script</title><link>/first-sysbench-lua-script/</link><pubDate>Tue, 09 Apr 2024 15:52:12 +0800</pubDate><author><name>happy-v587</name></author><guid>/first-sysbench-lua-script/</guid><description><![CDATA[<h2 id="零sysbench-介绍" class="headerLink">
-    <a href="#%e9%9b%b6sysbench-%e4%bb%8b%e7%bb%8d" class="header-mark"></a>零、sysbench 介绍</h2><p>Sysbench 是一个开源的<span style="color: rgb(255, 76, 65);">多线程性能测试工具</span>。它提供了一系列的测试用例，用户<span style="color: rgb(255, 76, 65);">可以通过命令行参数自定义测试的各种方面，如线程数、测试时长、数据大小</span>等。</p>]]></description></item></channel></rss>
+    <a href="#%e4%b8%80%e5%8a%9f%e8%83%bd%e6%b5%8b%e8%af%95" class="header-mark"></a>一、功能测试</h2><p>基于docker运行测试case</p>]]></description></item></channel></rss>
