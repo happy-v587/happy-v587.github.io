@@ -81,9 +81,7 @@ MariaDB 与 MySQL 的返回标识并不相同，因此代理需要按各自的 r
 在 `LOCAL` 和 `GLOBAL` 策略下，代理会在实际读请求前加入一个GTID等待SQL。
 MariaDB 用 MASTER_GTID_WAIT、 MySQL 用 WAIT_FOR_EXECUTED_GTID_SET 。
 等待成功时，读请求才继续；超时、错误会在主库上读取。
-
-![获取gtid](15.png)
-
+![补sql](15.png)
 这也说明了一致性不是凭空得到的。选择等待可以降低读到旧数据的概率，但复制延迟会转化为读请求的额外等待时间。
 
 ### FAST：比较进度，选择合适的后端
@@ -92,9 +90,9 @@ MariaDB 用 MASTER_GTID_WAIT、 MySQL 用 WAIT_FOR_EXECUTED_GTID_SET 。
 
 （问题来了，这就需要不断维护所有后端节点的GTID，那这个是怎么获取和维护的？我们日后文章再说）
 
-![后端 GTID 位置比较|412](12.png)
+![后端 GTID 位置比较|642](12.png)
 
-![兼容性相关实现片段|415](13.png)
+![兼容性相关实现片段|642](13.png)
 
 ## 总结
 
