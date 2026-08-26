@@ -1,4 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>S3 on C4H</title><link>/tags/s3/</link><description>Recent content in S3 on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Sat, 10 Dec 2022 14:05:46 +0800</lastBuildDate><atom:link href="/tags/s3/index.xml" rel="self" type="application/rss+xml"/><item><title>Rockset：将 RocksDB 数据存储到S3上</title><link>/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/</link><pubDate>Sat, 10 Dec 2022 14:05:46 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/</guid><description>&lt;blockquote&gt;
- &lt;p&gt;本文由原作者归档自知乎，原文发布于 2022-12-10。原文链接：&lt;a href="https://zhuanlan.zhihu.com/p/590773344" target="_blank" rel="noopener noreferrer"&gt;Rockset：将 RocksDB 数据存储到S3上&lt;/a&gt;。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>S3 on C4H</title><link>/tags/s3/</link><description>Recent content in S3 on C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Sat, 10 Dec 2022 14:05:46 +0800</lastBuildDate><atom:link href="/tags/s3/index.xml" rel="self" type="application/rss+xml"/><item><title>Rockset：将 RocksDB 数据存储到S3上</title><link>/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/</link><pubDate>Sat, 10 Dec 2022 14:05:46 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/</guid><description>
+ &lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自知乎，原文发布于 2022-12-10。原文链接：&lt;a class="link" href="https://zhuanlan.zhihu.com/p/590773344" target="_blank" rel="noopener"
+ &gt;Rockset：将 RocksDB 数据存储到S3上&lt;/a&gt;。&lt;/p&gt;
 
-&lt;/blockquote&gt;&lt;p&gt;本文要介绍的是基于RocksDB改造的rocksdb-cloud项目。&lt;/p&gt;</description></item></channel></rss>
+ &lt;/blockquote&gt;
+&lt;p&gt;本文要介绍的是基于RocksDB改造的rocksdb-cloud项目。&lt;/p&gt;
+&lt;p&gt;首先，可以看下官方的example，这个example展示了如何读写数据，以及如何在无感知的情况下将SST文件上传到S3上。&lt;/p&gt;
+&lt;p&gt;本人对这段代码进行了debug，并进行深入研究，上传到S3的奥秘如下&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang.md/img-01.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;实现的方法很巧妙，在执行Mem Table Flush的时候，先将文件写到本地，等RocksDB调用Close方法时再将这个文件Copy到S3上，然后删除本地文件。&lt;/p&gt;
+&lt;p&gt;通过这个方法，使得上传到S3的流程很简单，对主流程侵入很小；由于内容先写本地后写S3，所以整个SST的落盘IO会比直接写S3性能会好很多，可以保证读写数据的稳定。&lt;/p&gt;</description></item></channel></rss>

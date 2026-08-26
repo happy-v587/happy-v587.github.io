@@ -1,10 +1,60 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Build on C4H</title><link>/tags/build/</link><description>Recent content in Build on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Sat, 12 Mar 2022 23:02:41 +0800</lastBuildDate><atom:link href="/tags/build/index.xml" rel="self" type="application/rss+xml"/><item><title>Rockset： 源码编译</title><link>/rockset-yuan-ma-bian-yi/</link><pubDate>Sat, 12 Mar 2022 23:02:41 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/rockset-yuan-ma-bian-yi/</guid><description>&lt;blockquote&gt;
- &lt;p&gt;本文由原作者归档自知乎，原文发布于 2022-03-12。原文链接：&lt;a href="https://zhuanlan.zhihu.com/p/480023126" target="_blank" rel="noopener noreferrer"&gt;Rockset： 源码编译&lt;/a&gt;。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Build on C4H</title><link>/tags/build/</link><description>Recent content in Build on C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Sat, 12 Mar 2022 23:02:41 +0800</lastBuildDate><atom:link href="/tags/build/index.xml" rel="self" type="application/rss+xml"/><item><title>Rockset： 源码编译</title><link>/rockset-yuan-ma-bian-yi/</link><pubDate>Sat, 12 Mar 2022 23:02:41 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/rockset-yuan-ma-bian-yi/</guid><description>
+ &lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自知乎，原文发布于 2022-03-12。原文链接：&lt;a class="link" href="https://zhuanlan.zhihu.com/p/480023126" target="_blank" rel="noopener"
+ &gt;Rockset： 源码编译&lt;/a&gt;。&lt;/p&gt;
 
-&lt;/blockquote&gt;&lt;h2 id="说明" class="headerLink"&gt;
- &lt;a href="#%e8%af%b4%e6%98%8e" class="header-mark"&gt;&lt;/a&gt;说明&lt;/h2&gt;&lt;p&gt;官方README.md里面已经有详细的编译说明了。值得注意的是：编译之前要先安装aws的sdk，并且要求安装到/usr/local目录下。为了支持存储到s3上，需要在环境变量里面配置USE_AWS=1。&lt;/p&gt;
-&lt;p&gt;&lt;img class="tw-inline" loading="lazy" src='/images/rockset-yuan-ma-bian-yi.md/img-01.jpg' alt="图 1" &gt;&lt;/p&gt;
-&lt;h2 id="编译" class="headerLink"&gt;
- &lt;a href="#%e7%bc%96%e8%af%91" class="header-mark"&gt;&lt;/a&gt;编译&lt;/h2&gt;&lt;h3 id="aws-sdk-cpp" class="headerLink"&gt;
- &lt;a href="#aws-sdk-cpp" class="header-mark"&gt;&lt;/a&gt;aws-sdk-cpp&lt;/h3&gt;&lt;blockquote&gt;
- &lt;p&gt;此处建议使用rockset fork出来的仓库，因为aws官方仓库会不断更新，有可能导致rockset不兼容高版本sdk。&lt;/p&gt;</description></item></channel></rss>
+ &lt;/blockquote&gt;
+&lt;h2 id="说明"&gt;说明
+&lt;/h2&gt;&lt;p&gt;官方README.md里面已经有详细的编译说明了。值得注意的是：编译之前要先安装aws的sdk，并且要求安装到/usr/local目录下。为了支持存储到s3上，需要在环境变量里面配置USE_AWS=1。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/rockset-yuan-ma-bian-yi.md/img-01.jpg"&gt;&lt;/p&gt;
+&lt;h2 id="编译"&gt;编译
+&lt;/h2&gt;&lt;h3 id="aws-sdk-cpp"&gt;aws-sdk-cpp
+&lt;/h3&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;此处建议使用rockset fork出来的仓库，因为aws官方仓库会不断更新，有可能导致rockset不兼容高版本sdk。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;本人编译时就发现clone_example一直运行不起来，排查了一天，最后发现是请求S3时调用PutObject接口因为验签问题报错了。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://github.com/rockset/aws-sdk-cpp.git
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; aws-sdk-cpp
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git submodule update --init --recursive
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir build
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; build
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;cmake ..
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;make -j8
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;make install
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="rockset-cloud"&gt;rockset-cloud
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://github.com/rockset/rocksdb-cloud.git
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; rocksdb-cloud
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;USE_AWS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;make static_lib -j &lt;span class="m"&gt;8&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; cloud/examples
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;make all
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="运行"&gt;运行
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="图 2" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/rockset-yuan-ma-bian-yi.md/img-02.jpg"&gt;&lt;/p&gt;</description></item></channel></rss>

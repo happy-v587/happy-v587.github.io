@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Comparison on C4H</title><link>/tags/comparison/</link><description>Recent content in Comparison on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Thu, 01 Apr 2021 10:56:20 +0800</lastBuildDate><atom:link href="/tags/comparison/index.xml" rel="self" type="application/rss+xml"/><item><title>不同数据库支持情况对比</title><link>/bu-tong-shu-ju-ku-zhi-chi-qing-kuang-dui-bi/</link><pubDate>Thu, 01 Apr 2021 10:56:20 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/bu-tong-shu-ju-ku-zhi-chi-qing-kuang-dui-bi/</guid><description>&lt;blockquote&gt;
- &lt;p&gt;本文由原作者归档自 CSDN，原文发布于 2021-04-01。原文链接：&lt;a href="https://blog.csdn.net/LIUHUAN0520/article/details/115369185" target="_blank" rel="noopener noreferrer"&gt;不同数据库支持情况对比&lt;/a&gt;。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Comparison on C4H</title><link>/tags/comparison/</link><description>Recent content in Comparison on C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Thu, 01 Apr 2021 10:56:20 +0800</lastBuildDate><atom:link href="/tags/comparison/index.xml" rel="self" type="application/rss+xml"/><item><title>不同数据库支持情况对比</title><link>/bu-tong-shu-ju-ku-zhi-chi-qing-kuang-dui-bi/</link><pubDate>Thu, 01 Apr 2021 10:56:20 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/bu-tong-shu-ju-ku-zhi-chi-qing-kuang-dui-bi/</guid><description>
+ &lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自 CSDN，原文发布于 2021-04-01。原文链接：&lt;a class="link" href="https://blog.csdn.net/LIUHUAN0520/article/details/115369185" target="_blank" rel="noopener"
+ &gt;不同数据库支持情况对比&lt;/a&gt;。&lt;/p&gt;
 
-&lt;/blockquote&gt;&lt;table&gt;
+ &lt;/blockquote&gt;
+&lt;table&gt;
 	&lt;thead&gt;
 			&lt;tr&gt;
 					&lt;th&gt;SQL支持&lt;/th&gt;
@@ -17,21 +20,24 @@
 					&lt;td&gt;Y&lt;/td&gt;
 					&lt;td&gt;硬盘&lt;/td&gt;
 					&lt;td&gt;Y&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/pingcap/tidb" target="_blank" rel="noopener noreferrer"&gt;https://github.com/pingcap/tidb https://github.com/greenplum-db/gpdb https://github.com/cockroachdb/cockroach&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/pingcap/tidb" target="_blank" rel="noopener"
+ &gt;https://github.com/pingcap/tidb https://github.com/greenplum-db/gpdb https://github.com/cockroachdb/cockroach&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;Y&lt;/td&gt;
 					&lt;td&gt;Y&lt;/td&gt;
 					&lt;td&gt;硬盘&lt;/td&gt;
 					&lt;td&gt;N&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/mysql/mysql-server" target="_blank" rel="noopener noreferrer"&gt;https://github.com/mysql/mysql-server (inndob存储引擎)&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/mysql/mysql-server" target="_blank" rel="noopener"
+ &gt;https://github.com/mysql/mysql-server (inndob存储引擎)&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;Y&lt;/td&gt;
 					&lt;td&gt;Y&lt;/td&gt;
 					&lt;td&gt;内存&lt;/td&gt;
 					&lt;td&gt;Y&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/VoltDB/voltdb" target="_blank" rel="noopener noreferrer"&gt;https://github.com/VoltDB/voltdb&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/VoltDB/voltdb" target="_blank" rel="noopener"
+ &gt;https://github.com/VoltDB/voltdb&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;Y&lt;/td&gt;
@@ -45,14 +51,16 @@
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;硬盘&lt;/td&gt;
 					&lt;td&gt;Y&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/rqlite/rqlite" target="_blank" rel="noopener noreferrer"&gt;https://github.com/rqlite/rqlite&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/rqlite/rqlite" target="_blank" rel="noopener"
+ &gt;https://github.com/rqlite/rqlite&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;Y&lt;/td&gt;
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;硬盘&lt;/td&gt;
 					&lt;td&gt;N&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/sqlite/sqlite" target="_blank" rel="noopener noreferrer"&gt;https://github.com/sqlite/sqlite&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/sqlite/sqlite" target="_blank" rel="noopener"
+ &gt;https://github.com/sqlite/sqlite&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;Y&lt;/td&gt;
@@ -66,14 +74,16 @@
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;内存&lt;/td&gt;
 					&lt;td&gt;N&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/mysql/mysql-server" target="_blank" rel="noopener noreferrer"&gt;https://github.com/mysql/mysql-server (Memory存储引擎)&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/mysql/mysql-server" target="_blank" rel="noopener"
+ &gt;https://github.com/mysql/mysql-server (Memory存储引擎)&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;Y&lt;/td&gt;
 					&lt;td&gt;硬盘&lt;/td&gt;
 					&lt;td&gt;Y&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/distributedio/titan" target="_blank" rel="noopener noreferrer"&gt;https://github.com/distributedio/titan https://github.com/tikv/tikv&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/distributedio/titan" target="_blank" rel="noopener"
+ &gt;https://github.com/distributedio/titan https://github.com/tikv/tikv&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;N&lt;/td&gt;
@@ -101,28 +111,32 @@
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;硬盘&lt;/td&gt;
 					&lt;td&gt;Y&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/influxdata/influxdb" target="_blank" rel="noopener noreferrer"&gt;https://github.com/influxdata/influxdb https://github.com/etcd-io/etcd https://github.com/mongodb/mongo&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/influxdata/influxdb" target="_blank" rel="noopener"
+ &gt;https://github.com/influxdata/influxdb https://github.com/etcd-io/etcd https://github.com/mongodb/mongo&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;硬盘&lt;/td&gt;
 					&lt;td&gt;N&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/ledisdb/ledisdb" target="_blank" rel="noopener noreferrer"&gt;https://github.com/ledisdb/ledisdb https://github.com/facebook/rocksdb&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/ledisdb/ledisdb" target="_blank" rel="noopener"
+ &gt;https://github.com/ledisdb/ledisdb https://github.com/facebook/rocksdb&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;内存&lt;/td&gt;
 					&lt;td&gt;Y&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/redis/redis" target="_blank" rel="noopener noreferrer"&gt;https://github.com/redis/redis https://github.com/CodisLabs/codis&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/redis/redis" target="_blank" rel="noopener"
+ &gt;https://github.com/redis/redis https://github.com/CodisLabs/codis&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 			&lt;tr&gt;
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;N&lt;/td&gt;
 					&lt;td&gt;内存&lt;/td&gt;
 					&lt;td&gt;N&lt;/td&gt;
-					&lt;td&gt;&lt;a href="https://github.com/redis/redis" target="_blank" rel="noopener noreferrer"&gt;https://github.com/redis/redis&lt;/a&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;a class="link" href="https://github.com/redis/redis" target="_blank" rel="noopener"
+ &gt;https://github.com/redis/redis&lt;/a&gt;&lt;/td&gt;
 			&lt;/tr&gt;
 	&lt;/tbody&gt;
 &lt;/table&gt;</description></item></channel></rss>

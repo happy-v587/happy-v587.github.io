@@ -1,4 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Database on C4H</title><link>/categories/database/</link><description>Recent content in Database on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Thu, 07 Jul 2022 09:55:51 +0800</lastBuildDate><atom:link href="/categories/database/index.xml" rel="self" type="application/rss+xml"/><item><title>深度结合云存储的存储引擎设计构想</title><link>/shen-du-jie-he-yun-cun-chu-de-cun-chu-yin-qing-she-ji-gou-xiang/</link><pubDate>Thu, 07 Jul 2022 09:55:51 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/shen-du-jie-he-yun-cun-chu-de-cun-chu-yin-qing-she-ji-gou-xiang/</guid><description>&lt;blockquote&gt;
- &lt;p&gt;本文由原作者归档自知乎，原文发布于 2022-07-07。原文链接：&lt;a href="https://zhuanlan.zhihu.com/p/538576387" target="_blank" rel="noopener noreferrer"&gt;深度结合云存储的存储引擎设计构想&lt;/a&gt;。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Database on C4H</title><link>/categories/database/</link><description>Recent content in Database on C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Thu, 07 Jul 2022 09:55:51 +0800</lastBuildDate><atom:link href="/categories/database/index.xml" rel="self" type="application/rss+xml"/><item><title>深度结合云存储的存储引擎设计构想</title><link>/shen-du-jie-he-yun-cun-chu-de-cun-chu-yin-qing-she-ji-gou-xiang/</link><pubDate>Thu, 07 Jul 2022 09:55:51 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/shen-du-jie-he-yun-cun-chu-de-cun-chu-yin-qing-she-ji-gou-xiang/</guid><description>
+ &lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自知乎，原文发布于 2022-07-07。原文链接：&lt;a class="link" href="https://zhuanlan.zhihu.com/p/538576387" target="_blank" rel="noopener"
+ &gt;深度结合云存储的存储引擎设计构想&lt;/a&gt;。&lt;/p&gt;
 
-&lt;/blockquote&gt;&lt;p&gt;最近，TiKV发布了新的存储引擎去适配Multi-Raft和云存储。https://github.com/tikv/raft-engine。在这个设计中，让我最受启发的是对IO的思考。&lt;/p&gt;</description></item></channel></rss>
+ &lt;/blockquote&gt;
+&lt;p&gt;最近，TiKV发布了新的存储引擎去适配Multi-Raft和云存储。https://github.com/tikv/raft-engine。在这个设计中，让我最受启发的是对IO的思考。&lt;/p&gt;
+&lt;p&gt;我们都知道云存储(云盘存储、云文件存储、对象存储)具有着非常大的存储空间、极高的吞吐和QPS性能，但是每次访问的IO时延却很大。虽然，随着云存储的技术发展，IO时延会不断地降低，但是想要做到本地nvme ssd的性能效果，还是有非常大的挑战。既然IO时延不好降低，索性从存储引擎方面入手，尽量减少IO操作、提高QPS和吞吐也能达到不错的效果。&lt;/p&gt;
+&lt;p&gt;TiKV的Raft-Engine的确也是这么做的，https://docs.pingcap.com/zh/tidb/stable/release-6.1.0&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/shen-du-jie-he-yun-cun-chu-de-cun-chu-yin-qing-she-ji-gou-xiang.md/img-01.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;在Raft-Engine里面，还有很多其他的技巧去进一步降低IO次数、提高并发等。比如，多个write请求通过write group方式合并到一起去操作，将多个IO请求搞成1个。&lt;/p&gt;
+&lt;p&gt;未来应该出现一款新的存储引擎，每次write有极少的IO请求、但单次IO的size可以很大、或者有着极高的并行写能力。比如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;云存储本身可以保证数据的可靠性，有什么数据直接写就可以，那么存储引擎里面的block size就不在成为必须。此外，很多计算可以通过内存先buffer再批量写，从而提高吞吐，提高效率&lt;/li&gt;
+&lt;li&gt;云存储本身是分布式管理数据的，那么可以将存储引擎按照table或者region级别管理各自的wal，通过wal并行写的方式来提高QPS，从而提高效率&lt;/li&gt;
+&lt;li&gt;既然云存储的IO延迟不好解决，索性减少IO操作。Rocksdb设计比较好的地方就在于，每次update单行数据只有一个写WAL的IO请求，不好的地方是Flush和Compact会在某个时间占用很多的IO，而且Flush和Compact并不能充分利用云存储高QPS的特点，这是未来结合云需要改造的点。&lt;/li&gt;
+&lt;li&gt;或者，不经过linux的kernel直接操作云存储读写数据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果有一款存储引擎， 能够按照这样的方式去深度结合云存储的现状去设计，那么上层的数据库server设计将会更简单(毕竟云存储可以保证数据可靠不丢失，那么server层都不需要raft三副本了)，这会是有一次颠覆性的产品。&lt;/p&gt;</description></item></channel></rss>

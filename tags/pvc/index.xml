@@ -1,2 +1,15 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pvc on C4H</title><link>/tags/pvc/</link><description>Recent content in Pvc on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Wed, 10 Mar 2021 19:32:50 +0800</lastBuildDate><atom:link href="/tags/pvc/index.xml" rel="self" type="application/rss+xml"/><item><title>使用docker desktop软件开启k8s后创建pvc报错</title><link>/waiting-for-a-volume-to-be-created/</link><pubDate>Wed, 10 Mar 2021 19:32:50 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/waiting-for-a-volume-to-be-created/</guid><description>&lt;blockquote&gt;
- &lt;p&gt;本文由原作者归档自 CSDN，原文发布于 2021-03-10。原文链接：&lt;a href="https://blog.csdn.net/LIUHUAN0520/article/details/114643684" target="_blank" rel="noopener noreferrer"&gt;waiting for a volume to be created, either by external provisioner “docker.io/hostpath“ or manually&lt;/a&gt;。&lt;/p&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pvc on C4H</title><link>/tags/pvc/</link><description>Recent content in Pvc on C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Wed, 10 Mar 2021 19:32:50 +0800</lastBuildDate><atom:link href="/tags/pvc/index.xml" rel="self" type="application/rss+xml"/><item><title>使用docker desktop软件开启k8s后创建pvc报错</title><link>/waiting-for-a-volume-to-be-created/</link><pubDate>Wed, 10 Mar 2021 19:32:50 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/waiting-for-a-volume-to-be-created/</guid><description>
+ &lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自 CSDN，原文发布于 2021-03-10。原文链接：&lt;a class="link" href="https://blog.csdn.net/LIUHUAN0520/article/details/114643684" target="_blank" rel="noopener"
+ &gt;waiting for a volume to be created, either by external provisioner “docker.io/hostpath“ or manually&lt;/a&gt;。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="背景"&gt;背景
+&lt;/h2&gt;&lt;p&gt;使用docker desktop软件开启k8s后，创建pvc报错，详情如下：&lt;/p&gt;
+&lt;p&gt;waiting for a volume to be created, either by external provisioner &amp;quot; docker .io/hostpath&amp;quot; or manually created by system administrator&lt;/p&gt;
+&lt;h2 id="解决"&gt;解决
+&lt;/h2&gt;&lt;p&gt;经过排查发现是文件夹权限问题&lt;/p&gt;
+&lt;p&gt;&lt;a class="link" href="https://github.com/docker/for-mac/issues/3488" target="_blank" rel="noopener"
+ &gt;https://github.com/docker/for-mac/issues/3488&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;添加指定目录然后回车，即可&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/waiting-for-a-volume-to-be-created.md/img-01.png"&gt;&lt;/p&gt;</description></item></channel></rss>

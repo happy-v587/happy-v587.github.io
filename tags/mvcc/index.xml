@@ -1,5 +1,328 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mvcc on C4H</title><link>/tags/mvcc/</link><description>Recent content in Mvcc on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Mon, 15 Jun 2026 18:37:34 +0800</lastBuildDate><atom:link href="/tags/mvcc/index.xml" rel="self" type="application/rss+xml"/><item><title>MySQL 的 RR 到底有没有解决幻读</title><link>/mysql-de-rr-dao-di-you-mei-you-jie-jue-huan-du/</link><pubDate>Mon, 15 Jun 2026 18:37:34 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-de-rr-dao-di-you-mei-you-jie-jue-huan-du/</guid><description>&lt;blockquote&gt;
- &lt;p&gt;本文由原作者归档自知乎，原文发布于 2026-06-15。原文链接：&lt;a href="https://zhuanlan.zhihu.com/p/2049918197281952379" target="_blank" rel="noopener noreferrer"&gt;MySQL 的 RR 到底有没有解决幻读&lt;/a&gt;。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mvcc on C4H</title><link>/tags/mvcc/</link><description>Recent content in Mvcc on C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Mon, 15 Jun 2026 18:37:34 +0800</lastBuildDate><atom:link href="/tags/mvcc/index.xml" rel="self" type="application/rss+xml"/><item><title>MySQL 的 RR 到底有没有解决幻读</title><link>/mysql-de-rr-dao-di-you-mei-you-jie-jue-huan-du/</link><pubDate>Mon, 15 Jun 2026 18:37:34 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-de-rr-dao-di-you-mei-you-jie-jue-huan-du/</guid><description>
+ &lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自知乎，原文发布于 2026-06-15。原文链接：&lt;a class="link" href="https://zhuanlan.zhihu.com/p/2049918197281952379" target="_blank" rel="noopener"
+ &gt;MySQL 的 RR 到底有没有解决幻读&lt;/a&gt;。&lt;/p&gt;
 
-&lt;/blockquote&gt;&lt;h2 id="mysql-的-rr-到底有没有解决幻读" class="headerLink"&gt;
- &lt;a href="#mysql-%e7%9a%84-rr-%e5%88%b0%e5%ba%95%e6%9c%89%e6%b2%a1%e6%9c%89%e8%a7%a3%e5%86%b3%e5%b9%bb%e8%af%bb" class="header-mark"&gt;&lt;/a&gt;MySQL 的 RR 到底有没有解决幻读？&lt;/h2&gt;&lt;p&gt;关于数据库隔离级别，有一个流传很多年的结论：Read Committed 解决脏读，Repeatable Read 解决不可重复读，Serializable 解决幻读。&lt;/p&gt;</description></item></channel></rss>
+ &lt;/blockquote&gt;
+&lt;h2 id="mysql-的-rr-到底有没有解决幻读"&gt;MySQL 的 RR 到底有没有解决幻读？
+&lt;/h2&gt;&lt;p&gt;关于数据库隔离级别，有一个流传很多年的结论：Read Committed 解决脏读，Repeatable Read 解决不可重复读，Serializable 解决幻读。&lt;/p&gt;
+&lt;p&gt;所以很多人的认知是：RR 解决不了幻读。&lt;/p&gt;
+&lt;p&gt;但如果你查 MySQL 官方文档或者一些数据库专家的分享，又会看到另外一种说法：InnoDB 的 RR 已经解决了幻读。&lt;/p&gt;
+&lt;p&gt;那么问题来了：&lt;strong&gt;到底是谁说错了？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;事实上，两边都没错。因为讨论这个问题之前，必须先弄清楚一个经常被忽略的前提：你执行的到底是快照读，还是当前读？&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="幻读到底是什么"&gt;幻读到底是什么？
+&lt;/h2&gt;&lt;p&gt;先看一个经典场景。&lt;/p&gt;
+&lt;p&gt;假设当前 &lt;code&gt;orders&lt;/code&gt; 表中有三条数据：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;id | amount
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;---|-------
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1 | 80
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2 | 150
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3 | 200
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;时间线&lt;/th&gt;
+					&lt;th&gt;事务A&lt;/th&gt;
+					&lt;th&gt;事务B&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t1&lt;/td&gt;
+					&lt;td&gt;SELECT * FROM orders WHERE amount &amp;gt; 100;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;（返回两条记录）&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t2&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;BEGIN;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t3&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;INSERT INTO orders VALUES(4, 180);&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t4&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;COMMIT;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t5&lt;/td&gt;
+					&lt;td&gt;SELECT * FROM orders WHERE amount &amp;gt; 100;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;（返回三条记录）&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;同样的查询条件，两次查询结果集却发生了变化，这就是所谓的幻读（Phantom Read）。&lt;/p&gt;
+&lt;p&gt;ANSI SQL 对幻读的定义其实很简单：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;同一事务中，两次相同条件的查询返回了不同的结果集。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;注意这里说的是“结果集变化”，并没有规定必须是什么 SQL，也没有规定底层实现方式。&lt;/strong&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="为什么很多人觉得-rr-已经解决了幻读"&gt;为什么很多人觉得 RR 已经解决了幻读？
+&lt;/h2&gt;&lt;p&gt;因为他们做的实验通常是这样的：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;时间线&lt;/th&gt;
+					&lt;th&gt;事务A&lt;/th&gt;
+					&lt;th&gt;事务B&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t1&lt;/td&gt;
+					&lt;td&gt;BEGIN;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t2&lt;/td&gt;
+					&lt;td&gt;SELECT * FROM t;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t3&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;BEGIN;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t4&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;INSERT INTO t VALUES(4);&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t5&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;COMMIT;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t6&lt;/td&gt;
+					&lt;td&gt;SELECT * FROM t;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;code&gt;t6&lt;/code&gt; 结果仍然只有原来的数据，看不到 &lt;code&gt;id=4&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;于是很多人得出结论：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;RR 下不会出现幻读。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;这个实验本身没有问题，但它验证的其实是 &lt;strong&gt;MVCC 的快照读能力&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;在 InnoDB 的 RR 隔离级别下，第一次普通 &lt;code&gt;SELECT&lt;/code&gt; 会创建一个 Read View，后续查询都基于同一个快照进行读取，因此事务A始终看到的是事务开始时的数据状态。&lt;/p&gt;
+&lt;p&gt;从这个角度来说：对于快照读，幻读确实不会出现。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="那为什么标准教材又说-rr-解决不了幻读"&gt;那为什么标准教材又说 RR 解决不了幻读？
+&lt;/h2&gt;&lt;p&gt;因为标准讨论的是事务现象，而不是 MySQL 的具体实现。更重要的是，InnoDB 里除了快照读，还有另一种读取方式：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SELECT ... FOR UPDATE;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;UPDATE ...
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;DELETE ...
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这些操作属于当前读（Current Read）。当前读不会读取历史快照，而是直接读取最新版本的数据。&lt;/p&gt;
+&lt;p&gt;于是我们把实验稍微改一下。&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;时间线&lt;/th&gt;
+					&lt;th&gt;事务A&lt;/th&gt;
+					&lt;th&gt;事务B&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t1&lt;/td&gt;
+					&lt;td&gt;BEGIN;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t2&lt;/td&gt;
+					&lt;td&gt;SELECT * FROM t;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t3&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;BEGIN;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t4&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;INSERT INTO t VALUES(4);&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t5&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;COMMIT;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t6&lt;/td&gt;
+					&lt;td&gt;SELECT * FROM t FOR UPDATE;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;结果会发现：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;新插入的记录出现了。从事务A的角度看：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一次查询看到 3 条记录&lt;/li&gt;
+&lt;li&gt;第二次查询看到 4 条记录&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;按照 ANSI SQL 的定义，这就是幻读。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="真正决定幻读是否出现的其实不是-rr而是第一次访问时有没有加锁"&gt;真正决定幻读是否出现的，其实不是 RR，而是第一次访问时有没有加锁
+&lt;/h2&gt;&lt;p&gt;再看另外一个实验。&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;时间线&lt;/th&gt;
+					&lt;th&gt;事务A&lt;/th&gt;
+					&lt;th&gt;事务B&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t1&lt;/td&gt;
+					&lt;td&gt;BEGIN;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t2&lt;/td&gt;
+					&lt;td&gt;SELECT * FROM t FOR UPDATE;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;（此时 InnoDB 会加 Next-Key Lock）&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t3&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;BEGIN;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t4&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;INSERT INTO t VALUES(4);&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;（会被阻塞，直到事务A提交）&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;t5&lt;/td&gt;
+					&lt;td&gt;SELECT * FROM t FOR UPDATE;&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;/td&gt;
+					&lt;td&gt;（这时候事务A无论再执行多少次，结果都不会发生变化，因为新的记录根本插不进来）&lt;/td&gt;
+					&lt;td&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="innodb-到底是怎么解决幻读的"&gt;InnoDB 到底是怎么解决幻读的？
+&lt;/h2&gt;&lt;p&gt;很多文章把原因简单归结为 MVCC。实际上并不准确。InnoDB 能够避免幻读，本质上依赖的是两套机制：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;机制&lt;/th&gt;
+					&lt;th&gt;说明&lt;/th&gt;
+					&lt;th&gt;效果&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;MVCC&lt;/td&gt;
+					&lt;td&gt;负责解决快照读问题。保证事务内多次普通 SELECT 看到的是同一个一致性视图。&lt;/td&gt;
+					&lt;td&gt;MVCC 让你看不到幻影&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Next-Key Lock&lt;/td&gt;
+					&lt;td&gt;负责解决当前读问题。防止其他事务向查询范围内插入新的记录。&lt;/td&gt;
+					&lt;td&gt;Next-Key Lock 让别人造不出幻影。&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;两者配合，才构成了 InnoDB 在 RR 隔离级别下的完整并发控制方案。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="所以-rr-到底解决了幻读吗"&gt;所以 RR 到底解决了幻读吗？
+&lt;/h2&gt;&lt;p&gt;我觉得更准确的答案应该是：RR 本身并不能简单地说“解决”或者“没解决”幻读，而要看具体使用的是快照读还是当前读。&lt;/p&gt;
+&lt;p&gt;对于普通 &lt;code&gt;SELECT&lt;/code&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;InnoDB 通过 MVCC 保证一致性视图；&lt;/li&gt;
+&lt;li&gt;同一个事务内看到的是同一个快照；&lt;/li&gt;
+&lt;li&gt;不会观察到幻读。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对于 &lt;code&gt;FOR UPDATE&lt;/code&gt;、&lt;code&gt;UPDATE&lt;/code&gt;、&lt;code&gt;DELETE&lt;/code&gt; 等当前读：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;InnoDB 依赖 Gap Lock 和 Next-Key Lock；&lt;/li&gt;
+&lt;li&gt;防止其他事务向查询范围插入新记录；&lt;/li&gt;
+&lt;li&gt;从而避免幻读。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但如果先进行了快照读，后面又执行当前读，那么仍然有机会观察到“幻影记录”。&lt;/p&gt;
+&lt;p&gt;这也是为什么有人说：RR 解决了幻读。&lt;/p&gt;
+&lt;p&gt;而另一些人又坚持：RR 没有解决幻读。&lt;/p&gt;
+&lt;p&gt;因为他们讨论的根本不是同一种场景。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="一个更有意思的问题"&gt;一个更有意思的问题
+&lt;/h2&gt;&lt;p&gt;看到这里，其实还有一个问题值得继续思考。&lt;/p&gt;
+&lt;p&gt;MySQL 为了避免幻读，引入了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MVCC&lt;/li&gt;
+&lt;li&gt;Gap Lock&lt;/li&gt;
+&lt;li&gt;Next-Key Lock&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;那么 PostgreSQL 呢？PostgreSQL 也有 MVCC，但没有 InnoDB 这种 Gap Lock。它是怎么处理幻读的？Oracle、SQL Server、TiDB 的行为又是否一样？&lt;/p&gt;
+&lt;p&gt;下一篇，我们来聊聊主流数据库在幻读问题上的不同设计思路，以及为什么有些数据库甚至不需要 Gap Lock，也能实现 Serializable。&lt;/p&gt;</description></item></channel></rss>

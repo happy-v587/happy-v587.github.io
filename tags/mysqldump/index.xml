@@ -1,5 +1,227 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mysqldump on C4H</title><link>/tags/mysqldump/</link><description>Recent content in Mysqldump on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Tue, 26 Jan 2021 13:01:38 +0800</lastBuildDate><atom:link href="/tags/mysqldump/index.xml" rel="self" type="application/rss+xml"/><item><title>mysqldump引发数据库不可读写的血案</title><link>/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/</link><pubDate>Tue, 26 Jan 2021 13:01:38 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/</guid><description>&lt;blockquote&gt;
- &lt;p&gt;本文由原作者归档自知乎，原文发布于 2021-01-26。原文链接：&lt;a href="https://zhuanlan.zhihu.com/p/347105199" target="_blank" rel="noopener noreferrer"&gt;mysqldump引发数据库不可读写的血案&lt;/a&gt;。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mysqldump on C4H</title><link>/tags/mysqldump/</link><description>Recent content in Mysqldump on C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Tue, 26 Jan 2021 13:01:38 +0800</lastBuildDate><atom:link href="/tags/mysqldump/index.xml" rel="self" type="application/rss+xml"/><item><title>mysqldump引发数据库不可读写的血案</title><link>/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/</link><pubDate>Tue, 26 Jan 2021 13:01:38 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/</guid><description>
+ &lt;blockquote&gt;
+ &lt;p&gt;本文由原作者归档自知乎，原文发布于 2021-01-26。原文链接：&lt;a class="link" href="https://zhuanlan.zhihu.com/p/347105199" target="_blank" rel="noopener"
+ &gt;mysqldump引发数据库不可读写的血案&lt;/a&gt;。&lt;/p&gt;
 
-&lt;/blockquote&gt;&lt;h2 id="问题" class="headerLink"&gt;
- &lt;a href="#%e9%97%ae%e9%a2%98" class="header-mark"&gt;&lt;/a&gt;问题&lt;/h2&gt;&lt;p&gt;一直认为mysql在dump时候加上 &amp;ndash;single-transaction 就不会影响业务，除非有DDL同时在操作同一张表。但是最近发现即是没有DDL也有锁表情况，慢日志记录详情如下：&lt;/p&gt;</description></item></channel></rss>
+ &lt;/blockquote&gt;
+&lt;h2 id="问题"&gt;问题
+&lt;/h2&gt;&lt;p&gt;一直认为mysql在dump时候加上 &amp;ndash;single-transaction 就不会影响业务，除非有DDL同时在操作同一张表。但是最近发现即是没有DDL也有锁表情况，慢日志记录详情如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Time: 210115 3:05:10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# User@Host: sss[sss] @ [x.x.x.x] Id: 6109323&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Query_time: 61.872232 Lock_time: 0.000000 Rows_sent: 0 Rows_examined: 0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SET &lt;span class="nv"&gt;timestamp&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1610651110&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;FLUSH /*!40101 LOCAL */ TABLES&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Time: 210115 3:07:11&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# User@Host: sss[sss] @ [x.x.x.x] Id: 6109323&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Query_time: 120.989016 Lock_time: 0.000000 Rows_sent: 0 Rows_examined: 0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SET &lt;span class="nv"&gt;timestamp&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1610651231&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;FLUSH TABLES WITH READ LOCK&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;当时使用的逻辑备份命令为&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mysqldump -uroot -pxxx -R -E --single-transaction --skip-add-drop-table --set-gtid-purged&lt;span class="o"&gt;=&lt;/span&gt;OFF --master-data&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; db_name
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;此时的疑问：是哪个过程导致mysqldump执行了，&lt;code&gt;FLUSH /*!40101 LOCAL */ TABLES;&lt;/code&gt; 和 &lt;code&gt;FLUSH TABLES WITH READ LOCK;&lt;/code&gt;命令？&lt;/p&gt;
+&lt;h2 id="原因"&gt;原因
+&lt;/h2&gt;&lt;p&gt;关于参数，查阅了官方的参数说明，找到了答案&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -E, --events Dump events.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; -R, --routines Dump stored routines &lt;span class="o"&gt;(&lt;/span&gt;functions and procedures&lt;span class="o"&gt;)&lt;/span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --set-gtid-purged&lt;span class="o"&gt;[=&lt;/span&gt;name&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Add &lt;span class="s1"&gt;&amp;#39;SET @@GLOBAL.GTID_PURGED&amp;#39;&lt;/span&gt; to the output. Possible
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; values &lt;span class="k"&gt;for&lt;/span&gt; this option are ON, OFF and AUTO. If ON is
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; used and GTIDs are not enabled on the server, an error is
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; generated. If OFF is used, this option does nothing. If
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; AUTO is used and GTIDs are enabled on the server, &lt;span class="s1"&gt;&amp;#39;SET
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="s1"&gt; @@GLOBAL.GTID_PURGED&amp;#39;&lt;/span&gt; is added to the output. If GTIDs
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; are disabled, AUTO does nothing. If no value is supplied
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;then&lt;/span&gt; the default &lt;span class="o"&gt;(&lt;/span&gt;AUTO&lt;span class="o"&gt;)&lt;/span&gt; value will be considered.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --master-data&lt;span class="o"&gt;[=&lt;/span&gt;&lt;span class="c1"&gt;#] This causes the binary log position and filename to be&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; appended to the output. If equal to 1, will print it as a
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; CHANGE MASTER command&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; equal to 2, that &lt;span class="nb"&gt;command&lt;/span&gt; will
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; be prefixed with a comment symbol. This option will turn
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --lock-all-tables on, unless --single-transaction is
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; specified too &lt;span class="o"&gt;(&lt;/span&gt;in which &lt;span class="k"&gt;case&lt;/span&gt; a global &lt;span class="nb"&gt;read&lt;/span&gt; lock is only
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; taken a short &lt;span class="nb"&gt;time&lt;/span&gt; at the beginning of the dump&lt;span class="p"&gt;;&lt;/span&gt; don&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;t
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; forget to &lt;span class="nb"&gt;read&lt;/span&gt; about --single-transaction below&lt;span class="o"&gt;)&lt;/span&gt;. In all
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; cases, any action on logs will happen at the exact moment
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; of the dump. Option automatically turns --lock-tables
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; off.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --single-transaction
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Creates a consistent snapshot by dumping all tables in a
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; single transaction. Works ONLY &lt;span class="k"&gt;for&lt;/span&gt; tables stored in
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; storage engines which support multiversioning &lt;span class="o"&gt;(&lt;/span&gt;currently
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; only InnoDB does&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; the dump is NOT guaranteed to be
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; consistent &lt;span class="k"&gt;for&lt;/span&gt; other storage engines. While a
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --single-transaction dump is in process, to ensure a
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; valid dump file &lt;span class="o"&gt;(&lt;/span&gt;correct table contents and binary log
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; position&lt;span class="o"&gt;)&lt;/span&gt;, no other connection should use the following
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; statements: ALTER TABLE, DROP TABLE, RENAME TABLE,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; TRUNCATE TABLE, as consistent snapshot is not isolated
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; from them. Option automatically turns off --lock-tables.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;此处看下 &amp;ndash;master-data 参数说明：值为1会以非注释的方式展示位点信息；值为2时会通过注释的方式展示位点信息。&lt;/p&gt;
+&lt;p&gt;为了获取这样的位点信息，还是有一些副作用的。此流程会上：全局锁 &lt;code&gt;FLUSH TABLES WITH READ LOCK;&lt;/code&gt;+关闭打开的表&lt;code&gt;FLUSH /*!40101 LOCAL */ TABLES;&lt;/code&gt;，原来就是**&amp;ndash;master-data**参数导致的。&lt;/p&gt;
+&lt;p&gt;那么有什么可以优化表锁时间吗？看情况，全局锁没有办法优化，表锁可以。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果表是innodb存储引擎的可以通过添加&lt;code&gt;--single-transaction&lt;/code&gt;参数来缓解表锁时间，但是在读写频繁的数据库上会把undo_log撑大也因此带来了弊端。&lt;/li&gt;
+&lt;li&gt;如果表是非innodb存储引擎，就只能被锁表了。数据量越大锁表时间越长，影响线上业务越久。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;参数中说**&amp;ndash;master-data**全局锁的时间会很短&lt;code&gt;in which case a global read lock is only taken a short time at the beginning of the dump&lt;/code&gt;，但是根据开篇的慢日志记录可以看到，上锁的时间长达120秒。所以影响业务的情况应该包括：&lt;strong&gt;上锁时间+锁表时间&lt;/strong&gt;。&lt;/p&gt;
+&lt;h2 id="mysqldump实验"&gt;mysqldump实验
+&lt;/h2&gt;&lt;p&gt;为了深入理解提到的参数作用，我们进行了下面5个实验。实验选择mysql这个系统库，并且开启general log来记录具体执行的sql&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 涉及到的参数&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;--master-data
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;--skip-lock-tables
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;--single-transaction
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;--lock-tables
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="sql0"&gt;SQL0
+&lt;/h2&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;mysqldump -uroot -pxxx -R -E &lt;strong&gt;&amp;ndash;single-transaction&lt;/strong&gt; &amp;ndash;skip-add-drop-table &amp;ndash;set-gtid-purged=OFF &lt;strong&gt;&amp;ndash;master-data=2&lt;/strong&gt; demo&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;以上是本人一直使用的dump命令&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-01.jpg"&gt;&lt;/p&gt;
+&lt;h2 id="sql1"&gt;SQL1
+&lt;/h2&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;mysqldump -uroot -pxxx -R -E &amp;ndash;skip-add-drop-table &amp;ndash;set-gtid-purged=OFF &lt;strong&gt;&amp;ndash;master-data=2&lt;/strong&gt; demo&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;img alt="图 2" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-02.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;和上一组SQL对比，发现少了&lt;code&gt;START TRANSACTION /*!40100 WITH CONSISTENT SNAPSHOT */&lt;/code&gt; &lt;code&gt;SAVEPOINT sp&lt;/code&gt; &lt;code&gt;ROLLBACK TO SAVEPOINT sp&lt;/code&gt;命令，这也表明了，没有通过事务的方式进行dump。并且没有显式的使用UNLOCK TABLES。这就说明在dump过程中一直在锁表，直到会话结束，全局锁自动释放。&lt;/p&gt;
+&lt;h2 id="sql2"&gt;SQL2
+&lt;/h2&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;mysqldump -uroot -pxxx -R -E &lt;strong&gt;&amp;ndash;single-transaction&lt;/strong&gt; &amp;ndash;skip-add-drop-table &amp;ndash;set-gtid-purged=OFF demo&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;img alt="图 3" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-03.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;去掉了**&amp;ndash;master-data=2** 参数，我们没有看到 &lt;code&gt;FLUSH /*!40101 LOCAL */ TABLES&lt;/code&gt;和&lt;code&gt;FLUSH TABLES WITH READ LOCK&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id="sql3"&gt;SQL3
+&lt;/h2&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;mysqldump -uroot -pxxxx -R -E &amp;ndash;skip-add-drop-table &amp;ndash;set-gtid-purged=OFF mysql&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;img alt="图 4" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-04.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;去掉 &lt;strong&gt;&amp;ndash;single-transaction&lt;/strong&gt; 参数，我们看到mysqldump上了&lt;code&gt;lock tables xxx read&lt;/code&gt;的表级别锁。&lt;/p&gt;
+&lt;h2 id="sql4"&gt;SQL4
+&lt;/h2&gt;
+ &lt;blockquote&gt;
+ &lt;p&gt;mysqldump -uroot -pxxxx -R -E &amp;ndash;skip-add-drop-table &lt;strong&gt;&amp;ndash;skip-lock-tables&lt;/strong&gt; &amp;ndash;set-gtid-purged=OFF mysql&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;&lt;img alt="图 5" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-05.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;加上**&amp;ndash;skip-lock-tables**解决了 &lt;code&gt;LOCK TABLES a READ /*!32311 LOCAL */&lt;/code&gt; &lt;code&gt;UNLOCK TABLES&lt;/code&gt; 的问题&lt;/p&gt;
+&lt;h2 id="结论"&gt;结论
+&lt;/h2&gt;&lt;p&gt;通过上述实验，我们就可以清晰的知道每个参数的作用了。&lt;/p&gt;
+&lt;h2 id="参数"&gt;参数
+&lt;/h2&gt;&lt;h3 id="single-transaction"&gt;&amp;ndash;single-transaction
+&lt;/h3&gt;&lt;p&gt;通过开启事务的方式进行dump&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;START TRANSACTION /*!40100 WITH CONSISTENT SNAPSHOT */
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;SAVEPOINT sp
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="master-data2"&gt;&amp;ndash;master-data=2
+&lt;/h3&gt;&lt;p&gt;为了获取一致性位点，需要上两把锁&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;FLUSH /*!40101 LOCAL */ TABLES
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;FLUSH TABLES WITH READ LOCK
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="lock-tables"&gt;&amp;ndash;lock-tables
+&lt;/h3&gt;&lt;p&gt;默认会锁住所有需要dump的表，来保证数据的一致性&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;LOCK TABLES &lt;span class="sb"&gt;`&lt;/span&gt;a&lt;span class="sb"&gt;`&lt;/span&gt; READ /*!32311 LOCAL */
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;LOCK TABLES &lt;span class="sb"&gt;`&lt;/span&gt;mysql.proc&lt;span class="sb"&gt;`&lt;/span&gt; READ /*!32311 LOCAL */
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="skip-lock-tables"&gt;&amp;ndash;skip-lock-tables
+&lt;/h3&gt;&lt;p&gt;和&amp;ndash;lock-all-tables 的作用相反。&lt;/p&gt;</description></item></channel></rss>

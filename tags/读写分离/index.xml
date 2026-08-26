@@ -1,5 +1,74 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>读写分离 on C4H</title><link>/tags/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/</link><description>Recent content in 读写分离 on C4H</description><generator>Hugo</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Mon, 29 Dec 2025 00:00:00 +0800</lastBuildDate><atom:link href="/tags/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/index.xml" rel="self" type="application/rss+xml"/><item><title>读写分离后为什么会读到旧数据：MaxScale 的一致性读</title><link>/maxscale-mariadb-consistency-read/</link><pubDate>Mon, 29 Dec 2025 00:00:00 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/maxscale-mariadb-consistency-read/</guid><description>&lt;h2 id="问题" class="headerLink"&gt;
- &lt;a href="#%e9%97%ae%e9%a2%98" class="header-mark"&gt;&lt;/a&gt;问题&lt;/h2&gt;&lt;p&gt;读写分离最容易让人困惑的一幕是：写请求已经返回成功，紧接着发起查询，却没有看到刚写入的数据。这里不一定是事务没有提交，而是写落在主库后，读被路由到了尚未追上复制进度的副本。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>读写分离 on C4H</title><link>/tags/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/</link><description>Recent content in 读写分离 on C4H</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Mon, 29 Dec 2025 00:00:00 +0800</lastBuildDate><atom:link href="/tags/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/index.xml" rel="self" type="application/rss+xml"/><item><title>读写分离后为什么会读到旧数据：MaxScale 的一致性读</title><link>/maxscale-mariadb-consistency-read/</link><pubDate>Mon, 29 Dec 2025 00:00:00 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/maxscale-mariadb-consistency-read/</guid><description>&lt;h2 id="问题"&gt;问题
+&lt;/h2&gt;&lt;p&gt;读写分离最容易让人困惑的一幕是：写请求已经返回成功，紧接着发起查询，却没有看到刚写入的数据。这里不一定是事务没有提交，而是写落在主库后，读被路由到了尚未追上复制进度的副本。&lt;/p&gt;
 &lt;p&gt;那么，有什么办法可以解决这个问题呢？那就是本文要分析的 MaxScale，它解决了这个问题。&lt;/p&gt;
-&lt;h2 id="maxscale-的解决方案" class="headerLink"&gt;
- &lt;a href="#maxscale-%e7%9a%84%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark"&gt;&lt;/a&gt;MaxScale 的解决方案&lt;/h2&gt;&lt;p&gt;MaxScale 的一致性读思路是把“这次写已经产生到哪里”的 GTID 获取到，再让之后的读请求以这个位置为边界：要么等待只读节点追上，要么直接选择已经追上的只读节点。&lt;/p&gt;</description></item></channel></rss>
+&lt;h2 id="maxscale-的解决方案"&gt;MaxScale 的解决方案
+&lt;/h2&gt;&lt;p&gt;MaxScale 的一致性读思路是把“这次写已经产生到哪里”的 GTID 获取到，再让之后的读请求以这个位置为边界：要么等待只读节点追上，要么直接选择已经追上的只读节点。&lt;/p&gt;
+&lt;p&gt;源码中将因果读(就是一致性读，不同叫法)分为 &lt;code&gt;NONE&lt;/code&gt;、&lt;code&gt;LOCAL&lt;/code&gt;、&lt;code&gt;GLOBAL&lt;/code&gt; 和 &lt;code&gt;FAST&lt;/code&gt; 四种策略。它们解决问题的力度和代价并不相同。&lt;/p&gt;
+&lt;h3 id="none不施加一致性约束"&gt;NONE：不施加一致性约束
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;NONE&lt;/code&gt; 不为读请求附加 GTID 条件。读写分离仍可照常路由，但一次写之后的下一次读可能落到复制尚未完成的副本，因此可能看到旧数据。这是没有因果读保障时最直接的行为。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="NONE 模式示意图" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/0.svg"&gt;&lt;/p&gt;
+&lt;h3 id="local只保证同一会话的前后关系"&gt;LOCAL：只保证同一会话的前后关系
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;LOCAL&lt;/code&gt; 关注同一个 proxy session 内的读写顺序。写请求完成后得到的 GTID 保存在该 session 中；后续由同一 session 发起的读，会以这个 GTID 作为“至少已经执行到这里”的条件。&lt;/p&gt;
+&lt;p&gt;它的边界也很清楚：新建连接或换到另一个 session，并不会自动继承前一个 session 记录的位置。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="LOCAL 模式示意图" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/1.svg"&gt;&lt;/p&gt;
+&lt;h3 id="global把位置扩大到代理全局范围"&gt;GLOBAL：把位置扩大到代理全局范围
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;GLOBAL&lt;/code&gt; 将写请求得到的 GTID 保存到 proxy 的全局状态中，而不只属于单个 session。这样，不同 session 的读请求也能以同一份进度为依据，减少“换一个连接又读旧了”的情况。&lt;/p&gt;
+&lt;p&gt;相应地，它的等待范围更大：一个会话产生的写进度会影响其他会话后续读请求的选择或等待。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="GLOBAL 模式示意图" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/2.svg"&gt;&lt;/p&gt;
+&lt;h3 id="fast优先选择已经追上的后端"&gt;FAST：优先选择已经追上的后端
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;FAST&lt;/code&gt; 不把重点放在读前等待，而是查看多个后端已知的 GTID 位置，挑选一个已经满足目标 GTID 的节点来处理读请求。若存在这样的副本，读可以直接发送过去，避免为了等待复制进度而阻塞在读路径上。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="FAST 模式示意图" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/3.svg"&gt;&lt;/p&gt;
+&lt;h2 id="maxscale-的一致性读实现"&gt;MaxScale 的一致性读实现
+&lt;/h2&gt;&lt;h3 id="proxy-在主节点写入时同步获取gtid"&gt;proxy 在主节点写入时同步获取GTID
+&lt;/h3&gt;&lt;p&gt;要让代理知道“一次成功的写对应哪个位置”，后端 server 必须在写完成后的 response 中返回 GTID。不同服务端的会话跟踪配置和返回方式并不完全一样：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MariaDB 通过 &lt;code&gt;session_track_system_variables&lt;/code&gt; 参数&lt;/li&gt;
+&lt;li&gt;MySQL 使用 &lt;code&gt;session_track_gtids&lt;/code&gt; 参数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;数据库类型&lt;/th&gt;
+					&lt;th&gt;参数说明&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;MySQL 会话跟踪参数&lt;/td&gt;
+					&lt;td&gt;&lt;img alt="MySQL 会话跟踪配置" class="gallery-image" data-flex-basis="395px" data-flex-grow="164" height="1306" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/6.png" srcset="/maxscale-mariadb-consistency-read/6_hu_269b895c14abcd52.png 800w, /maxscale-mariadb-consistency-read/6_hu_2f87278fe6edc7aa.png 1600w, /maxscale-mariadb-consistency-read/6.png 2154w" width="2154"&gt;&lt;br&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;MariaDB 会话跟踪参数&lt;/td&gt;
+					&lt;td&gt;&lt;img alt="MariaDB 会话跟踪配置" class="gallery-image" data-flex-basis="445px" data-flex-grow="185" height="916" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/4.png" srcset="/maxscale-mariadb-consistency-read/4_hu_cc1e317a49e88a9e.png 800w, /maxscale-mariadb-consistency-read/4_hu_ddf1803f01a605f3.png 1600w, /maxscale-mariadb-consistency-read/4.png 1700w" width="1700"&gt;&lt;br&gt;&lt;br&gt;&lt;img alt="MariaDB 返回的 GTID 信息" class="gallery-image" data-flex-basis="1445px" data-flex-grow="602" height="374" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/5.png" srcset="/maxscale-mariadb-consistency-read/5_hu_e5acb5fba82ac2b5.png 800w, /maxscale-mariadb-consistency-read/5_hu_ef159fc0bea3aa18.png 1600w, /maxscale-mariadb-consistency-read/5.png 2252w" width="2252"&gt;&lt;br&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="proxy-解析-response-中的-gtid"&gt;proxy 解析 response 中的 GTID
+&lt;/h3&gt;&lt;p&gt;MaxScale 会依据 response 中的协议标志和内容解析 GTID。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="MySQL 返回的 GTID 信息|642" class="gallery-image" data-flex-basis="1078px" data-flex-grow="449" height="788" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/7.png" srcset="/maxscale-mariadb-consistency-read/7_hu_13c8a0fb1183db7.png 800w, /maxscale-mariadb-consistency-read/7_hu_8fdb2ce7b65bb053.png 1600w, /maxscale-mariadb-consistency-read/7_hu_e4690a7ccff13545.png 2400w, /maxscale-mariadb-consistency-read/7.png 3542w" width="3542"&gt;
+（上图为MySQL的抓包结果）&lt;/p&gt;
+&lt;p&gt;MariaDB 与 MySQL 的返回标识并不相同，因此代理需要按各自的 response 形式识别并提取位置。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="从 response 解析 GTID" class="gallery-image" data-flex-basis="225px" data-flex-grow="93" height="2050" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/8.png" srcset="/maxscale-mariadb-consistency-read/8_hu_689845d31db8735e.png 800w, /maxscale-mariadb-consistency-read/8_hu_b4f73def89c857ef.png 1600w, /maxscale-mariadb-consistency-read/8.png 1926w" width="1926"&gt;&lt;/p&gt;
+&lt;p&gt;提取成功后，GTID 才能写入 session 状态或全局状态，供读请求使用。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="读请求中的 GTID 解析" class="gallery-image" data-flex-basis="292px" data-flex-grow="122" height="1670" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/9.png" srcset="/maxscale-mariadb-consistency-read/9_hu_a7c58c42ecc4192d.png 800w, /maxscale-mariadb-consistency-read/9_hu_78cadab35db7e3fe.png 1600w, /maxscale-mariadb-consistency-read/9.png 2038w" width="2038"&gt;&lt;/p&gt;
+&lt;h3 id="proxy-在只读节点读取时使用gtid"&gt;proxy 在只读节点读取时使用GTID
+&lt;/h3&gt;&lt;p&gt;读请求进入代理时，代理先取得当前需要满足的 GTID。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;对 &lt;code&gt;LOCAL&lt;/code&gt; 而言，这通常来自当前 session 已记录的写进度；&lt;/li&gt;
+&lt;li&gt;对 &lt;code&gt;GLOBAL&lt;/code&gt; 而言，则来自代理维护的全局进度。
+&lt;img alt="获取gtid" class="gallery-image" data-flex-basis="3262px" data-flex-grow="1359" height="59" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/14.png" srcset="/maxscale-mariadb-consistency-read/14_hu_ed67208ad30b3b84.png 800w, /maxscale-mariadb-consistency-read/14.png 802w" width="802"&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;此时关键问题从“要不要读副本”变成了“这个后端是否已经包含目标位置”。&lt;/p&gt;
+&lt;h3 id="local-与-global用-gtid_wait-建立等待边界"&gt;LOCAL 与 GLOBAL：用 GTID_WAIT 建立等待边界
+&lt;/h3&gt;&lt;p&gt;在 &lt;code&gt;LOCAL&lt;/code&gt; 和 &lt;code&gt;GLOBAL&lt;/code&gt; 策略下，代理会在实际读请求前加入一个GTID等待SQL。
+MariaDB 用 MASTER_GTID_WAIT、 MySQL 用 WAIT_FOR_EXECUTED_GTID_SET 。
+等待成功时，读请求才继续；超时、错误会在主库上读取。
+&lt;img alt="补sql" class="gallery-image" data-flex-basis="338px" data-flex-grow="141" height="1143" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/15.png" srcset="/maxscale-mariadb-consistency-read/15_hu_3a67f9512ac6b4af.png 800w, /maxscale-mariadb-consistency-read/15_hu_48774529613a20db.png 1600w, /maxscale-mariadb-consistency-read/15.png 1614w" width="1614"&gt;
+这也说明了一致性不是凭空得到的。选择等待可以降低读到旧数据的概率，但复制延迟会转化为读请求的额外等待时间。&lt;/p&gt;
+&lt;h3 id="fast比较进度选择合适的后端"&gt;FAST：比较进度，选择合适的后端
+&lt;/h3&gt;&lt;p&gt;它比较目标 GTID 与后端节点的已知GTID位置，优先把读请求送往已经满足该位置的 server。其核心是“选一个已经追上的节点”，而非先把读请求提交给某个节点再等待。&lt;/p&gt;
+&lt;p&gt;（问题来了，这就需要不断维护所有后端节点的GTID，那这个是怎么获取和维护的？我们日后文章再说）&lt;/p&gt;
+&lt;p&gt;&lt;img alt="后端 GTID 位置比较|642" class="gallery-image" data-flex-basis="285px" data-flex-grow="119" height="2078" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/12.png" srcset="/maxscale-mariadb-consistency-read/12_hu_938dfa7ad1d578e8.png 800w, /maxscale-mariadb-consistency-read/12_hu_8c44f2fa19450d7c.png 1600w, /maxscale-mariadb-consistency-read/12_hu_6df34a98e3a6fcc6.png 2400w, /maxscale-mariadb-consistency-read/12.png 2474w" width="2474"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="兼容性相关实现片段|642" class="gallery-image" data-flex-basis="2829px" data-flex-grow="1178" height="190" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/maxscale-mariadb-consistency-read/13.png" srcset="/maxscale-mariadb-consistency-read/13_hu_52a5e53f6fc80e6c.png 800w, /maxscale-mariadb-consistency-read/13_hu_88654756e7e7f4af.png 1600w, /maxscale-mariadb-consistency-read/13.png 2240w" width="2240"&gt;&lt;/p&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;通过以上，我们可以看出MaxScale实现的非常巧妙，逻辑也很清晰。不过因为MariaDB和MySQL两个分支，在 GTID格式、会话跟踪参数、GTID_WAIT 等地方存在差异，需要区分处理。&lt;/p&gt;</description></item></channel></rss>
