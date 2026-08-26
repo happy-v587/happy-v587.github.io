@@ -6,13 +6,13 @@
  &lt;/blockquote&gt;
 &lt;h2 id="背景"&gt;背景
 &lt;/h2&gt;&lt;p&gt;一个行数为4亿条的表。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-01.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" class="gallery-image" data-flex-basis="1981px" data-flex-grow="825" height="255" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-01.png" srcset="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-01_hu_4fa32eb7c9d37686.png 800w, /mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-01_hu_1110ddd832552cda.png 1600w, /mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-01.png 2105w" width="2105"&gt;&lt;/p&gt;
 &lt;p&gt;查询50000000~50000010行之间的数据。发现查询时间达到20s！！！&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 2" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-02.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 2" class="gallery-image" data-flex-basis="492px" data-flex-grow="205" height="280" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-02.png" width="574"&gt;&lt;/p&gt;
 &lt;p&gt;查询执行计划发现，需要进行全表扫描，没有索引。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 3" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-03.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 3" class="gallery-image" data-flex-basis="1941px" data-flex-grow="808" height="124" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-03.png" srcset="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-03_hu_e141ea0859087927.png 800w, /mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-03.png 1003w" width="1003"&gt;&lt;/p&gt;
 &lt;p&gt;但是，sbtest1这个表是有索引的&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 4" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-04.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 4" class="gallery-image" data-flex-basis="623px" data-flex-grow="259" height="216" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-04.png" width="561"&gt;&lt;/p&gt;
 &lt;p&gt;为什么mysql没有选择索引，而是全表扫描呢？&lt;/p&gt;
 &lt;h2 id="分析"&gt;分析
 &lt;/h2&gt;&lt;h3 id="mysql-select-语法"&gt;mysql select 语法
@@ -93,11 +93,11 @@
  &gt;https://cloud.tencent.com/developer/article/1505252&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id="解决"&gt;解决
 &lt;/h2&gt;&lt;p&gt;在网上找到一个解决办法：可以把limit的offset当做where条件，这样mysql直接走索引，通过B+树直接定位到offset位置。类似于看书用书签标记下看到哪里的思路。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 5" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-05.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 5" class="gallery-image" data-flex-basis="523px" data-flex-grow="218" height="279" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-05.png" width="609"&gt;&lt;/p&gt;
 &lt;p&gt;查询执行计划发现的确如此&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 6" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-06.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 6" class="gallery-image" data-flex-basis="2044px" data-flex-grow="851" height="127" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-06.png" srcset="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-06_hu_2b882d70a5a43a29.png 800w, /mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-06.png 1082w" width="1082"&gt;&lt;/p&gt;
 &lt;p&gt;如果使用非聚簇索引，也可以达到相同的效果&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 7" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-07.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 7" class="gallery-image" data-flex-basis="632px" data-flex-grow="263" height="429" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-07.png" srcset="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-07_hu_75ddc2b68de498b.png 800w, /mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-07.png 1130w" width="1130"&gt;&lt;/p&gt;
 &lt;h2 id="引申"&gt;引申
 &lt;/h2&gt;&lt;p&gt;比如：订单表、商品表，如果想做到分页效果、并提高 用户体验 ，选择这种优化会有很大的提升。&lt;/p&gt;
 &lt;p&gt;就好比openstack的 开源项目 trove模块就有此设计，通过marker参数来保证一直分页的offset。&lt;/p&gt;
@@ -111,30 +111,30 @@
 &lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;由于trove支持多种数据库，所以mysql user这类url需要通过注册的方式添加&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="图 8" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-08.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 8" class="gallery-image" data-flex-basis="328px" data-flex-grow="136" height="380" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-08.png" width="520"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/openstack/trove/blob/master/trove/extensions/routes/mysql.py#L48" target="_blank" rel="noopener"
  &gt;https://github.com/openstack/trove/blob/master/trove/extensions/routes/mysql.py#L48&lt;/a&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;def index方法是/users的controller层实现，在这里调用了models.Users.load(context)方法，第一个参数是context，这个参数是trove封装的上下文里面包含一些基本信息。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="图 9" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-09.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 9" class="gallery-image" data-flex-basis="744px" data-flex-grow="310" height="248" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-09.png" width="769"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/openstack/trove/blob/master/trove/extensions/mysql/service.py#L64" target="_blank" rel="noopener"
  &gt;https://github.com/openstack/trove/blob/master/trove/extensions/mysql/service.py#L64&lt;/a&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;从上面controller层，调用到了models.User.load(context)方法，经过几次转换，调用到client.list_users(marker)方法参数带有marker。调用流程Users.load() -&amp;gt; load_via_context() -&amp;gt; Users.load_with_client(context.marker) -&amp;gt; client.list_users(marker)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="图 10" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-10.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 10" class="gallery-image" data-flex-basis="183px" data-flex-grow="76" height="827" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-10.png" width="634"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/openstack/trove/blob/master/trove/extensions/mysql/models.py#L182" target="_blank" rel="noopener"
  &gt;https://github.com/openstack/trove/blob/master/trove/extensions/mysql/models.py#L182&lt;/a&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;client.list_users的实现（manager层）&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="图 11" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-11.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 11" class="gallery-image" data-flex-basis="2049px" data-flex-grow="853" height="63" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-11.png" width="538"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/openstack/trove/blob/master/trove/guestagent/datastore/manager.py#L833" target="_blank" rel="noopener"
  &gt;https://github.com/openstack/trove/blob/master/trove/guestagent/datastore/manager.py#L833&lt;/a&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;list_users的service层实现，注释很详细，就不解释了。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="图 12" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong.md/img-12.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 12" class="gallery-image" data-flex-basis="146px" data-flex-grow="61" height="1274" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-limit-offset-yuan-li-fen-xi-yu-shi-yong/img-12.png" width="780"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/openstack/trove/blob/master/trove/guestagent/datastore/mysql_common/service.py#L340" target="_blank" rel="noopener"
  &gt;https://github.com/openstack/trove/blob/master/trove/guestagent/datastore/mysql_common/service.py#L340&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>

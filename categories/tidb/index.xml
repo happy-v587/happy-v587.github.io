@@ -13,7 +13,7 @@
 &lt;p&gt;比如Percona（MySQL源码的一个分支）修复了一个MySQL可能丢失数据的bug：https://docs.percona.com/percona-server/8.0/release-notes/8.0.39-30.html#bug-fixes。&lt;/p&gt;
 &lt;p&gt;关于Bug的更详细解读见：https://www.modb.pro/db/1869263663966728192&lt;/p&gt;
 &lt;p&gt;对应的修复代码：https://github.com/percona/percona-server/pull/5385/files&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/learn-distributed-system-testing-from-tidb.md/img-20241231103211.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="478px" data-flex-grow="199" height="1522" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/learn-distributed-system-testing-from-tidb/img-20241231103211.png" srcset="/learn-distributed-system-testing-from-tidb/img-20241231103211_hu_2c58b651214ef9e.png 800w, /learn-distributed-system-testing-from-tidb/img-20241231103211_hu_964c80cc50e08182.png 1600w, /learn-distributed-system-testing-from-tidb/img-20241231103211_hu_9d9a40d3965c057f.png 2400w, /learn-distributed-system-testing-from-tidb/img-20241231103211.png 3032w" width="3032"&gt;&lt;/p&gt;
 &lt;p&gt;上面列举的是一个软件层面BUG导致数据丢失的case，所以从PR中可以看到添加了对应的测试case以确保同一个问题不会再犯。那么其他workload会不会还有类似问题？机器故障时又会有什么表现呢？&lt;/p&gt;
 &lt;h2 id="数据库测试的手段"&gt;数据库测试的手段
 &lt;/h2&gt;&lt;p&gt;下面列举了一些数据库测试需要做的一些事情，内容主要来自上面推荐的几篇文章。&lt;/p&gt;
@@ -36,7 +36,7 @@
 &lt;h3 id="3错误注入"&gt;3、错误注入
 &lt;/h3&gt;&lt;p&gt;一个软件运行在操作系统之上，使用了硬件上的磁盘、CPU、内存、网卡、时钟等资源，在软件上还有文件系统、网络协议栈等。如何证明或者验证在这些依赖的资源出现错误时，数据库系统不会出现不符合ACID的问题？&lt;/p&gt;
 &lt;p&gt;如果你说把磁盘弄坏、网线拔掉、主机烧毁来模拟这类故障，这的确是个办法，但不是明智的的办法。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/learn-distributed-system-testing-from-tidb.md/img-20241231134035.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="480px" data-flex-grow="200" height="512" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/learn-distributed-system-testing-from-tidb/img-20241231134035.png" srcset="/learn-distributed-system-testing-from-tidb/img-20241231134035_hu_f011b492e7a39206.png 800w, /learn-distributed-system-testing-from-tidb/img-20241231134035.png 1024w" width="1024"&gt;&lt;/p&gt;
 &lt;p&gt;如果直接损坏硬件成本比较大，不妨加个中间层，这次添加的是故障模拟。“磁盘是模拟的，网络是模拟的，那我们可以监控它，你可以在任何时间、任何的场景下去注入各种错误，你可以注入任何你想要的错误。[3]”&lt;/p&gt;
 &lt;p&gt;在这方面有很多项目已经做过了，如：&lt;/p&gt;
 &lt;ul&gt;
@@ -64,15 +64,15 @@
 &lt;ul&gt;
 &lt;li&gt;Metrics： 丰富的内核指标、秒级数据采集、智能的异常判断&amp;amp;报警&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/learn-distributed-system-testing-from-tidb.md/img-20241231135113.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="472px" data-flex-grow="197" height="439" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/learn-distributed-system-testing-from-tidb/img-20241231135113.png" srcset="/learn-distributed-system-testing-from-tidb/img-20241231135113_hu_b8b3187e70622cd7.png 800w, /learn-distributed-system-testing-from-tidb/img-20241231135113.png 865w" width="865"&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Log： 存放了详细的错误信息，可以使用 FluentBit 或 Promtail，将这些数据导入 ES 或 LOKI 进行相关分析。对于分布式系统，一个事务会请求到做个组件，那么可以使用transaction ID打印到日志中将其关联起来。[4]&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/learn-distributed-system-testing-from-tidb.md/img-20241231135106.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="436px" data-flex-grow="181" height="476" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/learn-distributed-system-testing-from-tidb/img-20241231135106.png" srcset="/learn-distributed-system-testing-from-tidb/img-20241231135106_hu_4abf470f6fdc23f8.png 800w, /learn-distributed-system-testing-from-tidb/img-20241231135106.png 865w" width="865"&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Tracing： 在调用链概念出现之前，日志是用来帮助我们理解应用程序中发生情况的唯一途径。大多数的应用程序在他们运行的服务器上创建日志。然而，对于分布式系统来说，光靠日志是不够的，因为光靠日志定位问题的具体位置是一项巨大的挑战。但是调用链则可以非常方便的处理这种场景，因为其可以完整的追踪一个请求的开始到结束所经过的所有节点。[1]&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/learn-distributed-system-testing-from-tidb.md/img-20241231135059.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="357px" data-flex-grow="148" height="581" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/learn-distributed-system-testing-from-tidb/img-20241231135059.png" srcset="/learn-distributed-system-testing-from-tidb/img-20241231135059_hu_61738204bea14dd.png 800w, /learn-distributed-system-testing-from-tidb/img-20241231135059.png 865w" width="865"&gt;&lt;/p&gt;
 &lt;h3 id="5小结"&gt;5、小结
 &lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;TiDB作为一个后起之秀，在SQL测试上借助了社区现有 ORM Test，以此保证兼容性&lt;/li&gt;
@@ -92,7 +92,7 @@
 &lt;li&gt;&lt;strong&gt;argo&lt;/strong&gt;：一个基于k8s的工作流平台。比如在运行测试case前，创建namespace、新建secert，然后运行测试case，在测试完成后删除ns等。https://github.com/argoproj/argo-workflows&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;最终的运行关系如图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/learn-distributed-system-testing-from-tidb.md/img-20250104234735.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="448px" data-flex-grow="186" height="1846" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/learn-distributed-system-testing-from-tidb/img-20250104234735.png" srcset="/learn-distributed-system-testing-from-tidb/img-20250104234735_hu_beda61ddd12982ee.png 800w, /learn-distributed-system-testing-from-tidb/img-20250104234735_hu_cc2dcc154f3ad876.png 1600w, /learn-distributed-system-testing-from-tidb/img-20250104234735_hu_112c7826fe6c0fb1.png 2400w, /learn-distributed-system-testing-from-tidb/img-20250104234735.png 3446w" width="3446"&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;测试人员提交一个测试任务（argo workflow），依次执行step 1、2、3。&lt;/li&gt;
 &lt;li&gt;在执行 step 3 时，运行的镜像是由 tipocket 框架编写而来的测试case。这个case会创建一个tidb集群（节点副本数可以在配置），然后运行测试workload（模拟银行转账、模拟财务报表分析、或者随机生成SQL等，需要根据不同的workload编写对应的数据校验逻辑），workload运行期间还会随机生成各种错误并注入到集群中。&lt;/li&gt;
@@ -679,7 +679,7 @@
 &lt;h2 id="tiproxy-介绍"&gt;Tiproxy 介绍
 &lt;/h2&gt;&lt;p&gt;tiproxy 在 &lt;a class="link" href="https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/release-1.4.0-beta.3" target="_blank" rel="noopener"
  &gt;2022年12月2日被operator支持&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/tiproxy-yuan-li-he-shi-xian.md/img-20230730133043.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="433px" data-flex-grow="180" height="666" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/tiproxy-yuan-li-he-shi-xian/img-20230730133043.png" srcset="/tiproxy-yuan-li-he-shi-xian/img-20230730133043_hu_23af3894c4d83de9.png 800w, /tiproxy-yuan-li-he-shi-xian/img-20230730133043.png 1202w" width="1202"&gt;&lt;/p&gt;
 &lt;p&gt;相关的设计文档可以从官方 &lt;a class="link" href="https://github.com/pingcap/tidb/blob/master/docs/design/2022-07-20-session-manager.md" target="_blank" rel="noopener"
  &gt;README&lt;/a&gt; 和 &lt;a class="link" href="https://docs.google.com/document/d/10c1tXP8B_AwgHMp_A2EuS83I5gz2QL1nH-EPwRdGScM/edit?pli=1" target="_blank" rel="noopener"
  &gt;goole doc&lt;/a&gt; 中查看&lt;/p&gt;
@@ -1614,7 +1614,7 @@
 &lt;p&gt;对比于tidb、tikv、pd等组件代码，tiproxy实简单很多，推荐大家学习下。&lt;/p&gt;
 &lt;h2 id="彩蛋"&gt;彩蛋
 &lt;/h2&gt;&lt;p&gt;在梳理上面4个问题的时，理清思路后，绘制了如下的内部交互图，有兴趣的可以自己研究下，下篇文章我们将对其进行说明。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/tiproxy-yuan-li-he-shi-xian.md/img-20230730171638.png"&gt;&lt;/p&gt;</description></item><item><title>TiProxy 尝鲜</title><link>/try-tiproxy/</link><pubDate>Sat, 29 Jul 2023 22:09:11 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/try-tiproxy/</guid><description>&lt;hr&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="1686" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/tiproxy-yuan-li-he-shi-xian/img-20230730171638.png" srcset="/tiproxy-yuan-li-he-shi-xian/img-20230730171638_hu_f3c4d3d492c7d510.png 800w, /tiproxy-yuan-li-he-shi-xian/img-20230730171638_hu_45efb56ee8e7ed06.png 1600w, /tiproxy-yuan-li-he-shi-xian/img-20230730171638_hu_d308b1c64bfb31c3.png 2400w, /tiproxy-yuan-li-he-shi-xian/img-20230730171638.png 2912w" width="2912"&gt;&lt;/p&gt;</description></item><item><title>TiProxy 尝鲜</title><link>/try-tiproxy/</link><pubDate>Sat, 29 Jul 2023 22:09:11 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/try-tiproxy/</guid><description>&lt;hr&gt;
 &lt;h2 id="说明"&gt;说明
 &lt;/h2&gt;&lt;p&gt;最近发现 tidb 有个 &lt;a class="link" href="https://github.com/pingcap/TiProxy" target="_blank" rel="noopener"
  &gt;https://github.com/pingcap/TiProxy&lt;/a&gt; 仓库，抱着好奇的心态想试试这个组件的使用效果。于是按照文档的介绍在本地环境使用tiup做了一些实验，现在将实验过程和实验结果分享给大家。&lt;/p&gt;

@@ -33,7 +33,7 @@
 &lt;/div&gt;&lt;p&gt;在这里面会上 FLUSH TABLES WITH READ LOCK。这就要求我们理解下隔离级别和事务之间的关系了。&lt;/p&gt;
 &lt;h2 id="update和ftwl关系"&gt;update和FTWL关系
 &lt;/h2&gt;&lt;p&gt;基于上面的问题，进行了如下4个实验&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/xtrabackup-bei-fen-yuan-li-yu-shi-xian.md/img-01.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" class="gallery-image" data-flex-basis="222px" data-flex-grow="92" height="1680" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-01.png" srcset="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-01_hu_ba05ccab75341e11.png 800w, /xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-01.png 1558w" width="1558"&gt;&lt;/p&gt;
 &lt;p&gt;查阅资料发现，FTWRL执行，主要包括3个步骤：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;1.上全局读锁(lock_global_read_lock)&lt;/li&gt;
@@ -51,10 +51,10 @@
 &lt;h2 id="xtrabckup备份流程图"&gt;xtrabckup备份流程图
 &lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://www.cnblogs.com/linuxk/p/9372990.html" target="_blank" rel="noopener"
  &gt;https://www.cnblogs.com/linuxk/p/9372990.html&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 2" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/xtrabackup-bei-fen-yuan-li-yu-shi-xian.md/img-02.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 2" class="gallery-image" data-flex-basis="241px" data-flex-grow="100" height="934" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-02.png" srcset="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-02_hu_cd9cb1276a8e1994.png 800w, /xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-02.png 940w" width="940"&gt;&lt;/p&gt;
 &lt;h2 id="代码实现"&gt;代码实现
 &lt;/h2&gt;&lt;h3 id="主函数流程"&gt;主函数流程
-&lt;/h3&gt;&lt;p&gt;&lt;img alt="图 3" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/xtrabackup-bei-fen-yuan-li-yu-shi-xian.md/img-03.png"&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="图 3" class="gallery-image" data-flex-basis="162px" data-flex-grow="67" height="1643" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-03.png" srcset="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-03_hu_8368f5fcf291d80c.png 800w, /xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-03.png 1112w" width="1112"&gt;&lt;/p&gt;
 &lt;h3 id="main函数"&gt;main函数
 &lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;

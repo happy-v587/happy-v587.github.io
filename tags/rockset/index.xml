@@ -7,7 +7,7 @@
 &lt;p&gt;本文要介绍的是基于RocksDB改造的rocksdb-cloud项目。&lt;/p&gt;
 &lt;p&gt;首先，可以看下官方的example，这个example展示了如何读写数据，以及如何在无感知的情况下将SST文件上传到S3上。&lt;/p&gt;
 &lt;p&gt;本人对这段代码进行了debug，并进行深入研究，上传到S3的奥秘如下&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang.md/img-01.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" class="gallery-image" data-flex-basis="375px" data-flex-grow="156" height="920" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/img-01.jpg" srcset="/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/img-01_hu_9445afe38831fac4.jpg 800w, /rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/img-01.jpg 1440w" width="1440"&gt;&lt;/p&gt;
 &lt;p&gt;实现的方法很巧妙，在执行Mem Table Flush的时候，先将文件写到本地，等RocksDB调用Close方法时再将这个文件Copy到S3上，然后删除本地文件。&lt;/p&gt;
 &lt;p&gt;通过这个方法，使得上传到S3的流程很简单，对主流程侵入很小；由于内容先写本地后写S3，所以整个SST的落盘IO会比直接写S3性能会好很多，可以保证读写数据的稳定。&lt;/p&gt;</description></item><item><title>Rockset： 源码编译</title><link>/rockset-yuan-ma-bian-yi/</link><pubDate>Sat, 12 Mar 2022 23:02:41 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/rockset-yuan-ma-bian-yi/</guid><description>
  &lt;blockquote&gt;
@@ -17,7 +17,7 @@
  &lt;/blockquote&gt;
 &lt;h2 id="说明"&gt;说明
 &lt;/h2&gt;&lt;p&gt;官方README.md里面已经有详细的编译说明了。值得注意的是：编译之前要先安装aws的sdk，并且要求安装到/usr/local目录下。为了支持存储到s3上，需要在环境变量里面配置USE_AWS=1。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/rockset-yuan-ma-bian-yi.md/img-01.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" class="gallery-image" data-flex-basis="420px" data-flex-grow="175" height="821" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/rockset-yuan-ma-bian-yi/img-01.jpg" srcset="/rockset-yuan-ma-bian-yi/img-01_hu_8a1e3fa0e9d8fd49.jpg 800w, /rockset-yuan-ma-bian-yi/img-01.jpg 1440w" width="1440"&gt;&lt;/p&gt;
 &lt;h2 id="编译"&gt;编译
 &lt;/h2&gt;&lt;h3 id="aws-sdk-cpp"&gt;aws-sdk-cpp
 &lt;/h3&gt;
@@ -68,4 +68,4 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="运行"&gt;运行
-&lt;/h2&gt;&lt;p&gt;&lt;img alt="图 2" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/rockset-yuan-ma-bian-yi.md/img-02.jpg"&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;/h2&gt;&lt;p&gt;&lt;img alt="图 2" class="gallery-image" data-flex-basis="641px" data-flex-grow="267" height="539" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/rockset-yuan-ma-bian-yi/img-02.jpg" srcset="/rockset-yuan-ma-bian-yi/img-02_hu_a744f51e39d55f02.jpg 800w, /rockset-yuan-ma-bian-yi/img-02.jpg 1440w" width="1440"&gt;&lt;/p&gt;</description></item></channel></rss>

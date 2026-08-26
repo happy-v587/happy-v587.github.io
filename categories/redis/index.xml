@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Redis on Happy</title><link>/categories/redis/</link><description>Recent content in Redis on Happy</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Wed, 17 Apr 2024 12:43:04 +0000</lastBuildDate><atom:link href="/categories/redis/index.xml" rel="self" type="application/rss+xml"/><item><title>RedisRaft - 单元测试说明</title><link>/redisraft-dan-yuan-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 12:43:04 +0000</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/redisraft-dan-yuan-ce-shi-shuo-ming/</guid><description>&lt;p&gt;代码目录&lt;/p&gt;
-&lt;img width="399" alt="image" src="/images/redisraft-dan-yuan-ce-shi-shuo-ming.md/img-01.png"&gt;
+&lt;img width="399" alt="image" src="img-01.png"&gt;
 &lt;p&gt;主要测试了：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;util（对parse_slots函数测试）&lt;/li&gt;
@@ -7,15 +7,15 @@
 &lt;li&gt;log（用来维护 raft log的实现）&lt;/li&gt;
 &lt;li&gt;serialization（对 redis command 序列化与反序列化的测试）&lt;/li&gt;
 &lt;/ul&gt;
-&lt;img width="453" alt="image" src="/images/redisraft-dan-yuan-ce-shi-shuo-ming.md/img-02.png"&gt;</description></item><item><title>RedisRaft - 混沌测试说明</title><link>/redisraft-jepsen-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 20:42:43 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/redisraft-jepsen-ce-shi-shuo-ming/</guid><description>&lt;ul&gt;
+&lt;img width="453" alt="image" src="img-02.png"&gt;</description></item><item><title>RedisRaft - 混沌测试说明</title><link>/redisraft-jepsen-ce-shi-shuo-ming/</link><pubDate>Wed, 17 Apr 2024 20:42:43 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/redisraft-jepsen-ce-shi-shuo-ming/</guid><description>&lt;ul&gt;
 &lt;li&gt;redis-raft 仓库提供了基于 docker 的运行方式
-&lt;img alt="image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/redisraft-jepsen-ce-shi-shuo-ming.md/img-01.png"&gt;&lt;/li&gt;
+&lt;img alt="image" class="gallery-image" data-flex-basis="421px" data-flex-grow="175" height="1304" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/redisraft-jepsen-ce-shi-shuo-ming/img-01.png" srcset="/redisraft-jepsen-ce-shi-shuo-ming/img-01_hu_33a2dacfb2c53774.png 800w, /redisraft-jepsen-ce-shi-shuo-ming/img-01_hu_6bdf64a071172d0b.png 1600w, /redisraft-jepsen-ce-shi-shuo-ming/img-01.png 2288w" width="2288"&gt;&lt;/li&gt;
 &lt;li&gt;运行的代码存储在 &lt;a class="link" href="https://github.com/redislabs/jepsen-redisraft" target="_blank" rel="noopener"
  &gt;https://github.com/redislabs/jepsen-redisraft&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h3 id="关于-jepsen-redisraft-仓库的说明"&gt;关于 jepsen-redisraft 仓库的说明
-&lt;/h3&gt;&lt;img width="359" alt="image" src="/images/redisraft-jepsen-ce-shi-shuo-ming.md/img-02.png"&gt;
+&lt;/h3&gt;&lt;img width="359" alt="image" src="img-02.png"&gt;
 &lt;p&gt;0、程序入口&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;在 project.clj 中定义了 `:main jepsen.redis.core`
 然后打开 `src/jepsen.readis/core.clj` 文件
@@ -60,7 +60,7 @@
 &lt;p&gt;5、【测试框架】put it together&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://blog.csdn.net/FL63Zv9Zou86950w/article/details/117457782" target="_blank" rel="noopener"
  &gt;https://blog.csdn.net/FL63Zv9Zou86950w/article/details/117457782&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/redisraft-jepsen-ce-shi-shuo-ming.md/img-03.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="image" class="gallery-image" data-flex-basis="281px" data-flex-grow="117" height="635" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/redisraft-jepsen-ce-shi-shuo-ming/img-03.png" width="746"&gt;&lt;/p&gt;
 &lt;p&gt;以分布式数据库集群为例，Jepsen的工作大致包含以下几步：&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt; Jepsen在控制节点(Control Node)上作为Clojure程序运行；
  部署需要测试的分布式数据库集群(Distributed System)，确认其工作正常；
@@ -144,11 +144,11 @@ jepsen.redis.core=&amp;gt; (append/gen)
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;比如想要测试 raft snapshot 功能是否可以，其中一个case实现是：先启动一个 node 写些数据，然后 raft compact，之后在启动一个新 node，从这个新node查数据，验证是否存在
-&lt;img alt="image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/redisraft-ji-cheng-ce-shi-shuo-ming.md/img-01.png"&gt;&lt;/p&gt;
+&lt;img alt="image" class="gallery-image" data-flex-basis="444px" data-flex-grow="185" height="413" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/redisraft-ji-cheng-ce-shi-shuo-ming/img-01.png" width="765"&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;比如想要测试 raft membership 功能是否稳定，其中一个case实现是：先创建一个3节点的集群，删掉1号节点，通过2号节点查询节点数是否变成2
-&lt;img alt="image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/redisraft-ji-cheng-ce-shi-shuo-ming.md/img-02.png"&gt;&lt;/p&gt;
+&lt;img alt="image" class="gallery-image" data-flex-basis="575px" data-flex-grow="239" height="209" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/redisraft-ji-cheng-ce-shi-shuo-ming/img-02.png" width="501"&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;从测试case看，redisraft 主要从上层去关注集群状态是否符合预期。而且这些操作都是通过 raft cmd 去完成&lt;/p&gt;</description></item><item><title>RedisRaft - 使用说明</title><link>/redisraft-jepsen-guan-yu-shi-yong/</link><pubDate>Sun, 14 Apr 2024 06:33:51 +0000</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/redisraft-jepsen-guan-yu-shi-yong/</guid><description>&lt;p&gt;从官方仓库看测试可以分为两大类：&lt;/p&gt;
@@ -232,13 +232,13 @@ jepsen.redis.core=&amp;gt; (append/gen)
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;集成测试
-&lt;img alt="image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-01.png"&gt;
-&lt;img alt="image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-02.png"&gt;&lt;/p&gt;
+&lt;img alt="image" class="gallery-image" data-flex-basis="1462px" data-flex-grow="609" height="315" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/redisraft-jepsen-guan-yu-shi-yong/img-01.png" srcset="/redisraft-jepsen-guan-yu-shi-yong/img-01_hu_e0a9eea662652169.png 800w, /redisraft-jepsen-guan-yu-shi-yong/img-01_hu_820ade30029d13c2.png 1600w, /redisraft-jepsen-guan-yu-shi-yong/img-01.png 1919w" width="1919"&gt;
+&lt;img alt="image" class="gallery-image" data-flex-basis="2163px" data-flex-grow="901" height="213" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/redisraft-jepsen-guan-yu-shi-yong/img-02.png" srcset="/redisraft-jepsen-guan-yu-shi-yong/img-02_hu_d709edebff58a31.png 800w, /redisraft-jepsen-guan-yu-shi-yong/img-02_hu_93925e8378b4b633.png 1600w, /redisraft-jepsen-guan-yu-shi-yong/img-02.png 1920w" width="1920"&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;单元测试
-&lt;img alt="image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-03.png"&gt;
-&lt;img alt="image" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-04.png"&gt;&lt;/p&gt;
+&lt;img alt="image" class="gallery-image" data-flex-basis="1114px" data-flex-grow="464" height="413" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/redisraft-jepsen-guan-yu-shi-yong/img-03.png" srcset="/redisraft-jepsen-guan-yu-shi-yong/img-03_hu_6dc04bb825049b36.png 800w, /redisraft-jepsen-guan-yu-shi-yong/img-03_hu_321deac9a6b72569.png 1600w, /redisraft-jepsen-guan-yu-shi-yong/img-03.png 1918w" width="1918"&gt;
+&lt;img alt="image" class="gallery-image" data-flex-basis="1611px" data-flex-grow="671" height="286" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/redisraft-jepsen-guan-yu-shi-yong/img-04.png" srcset="/redisraft-jepsen-guan-yu-shi-yong/img-04_hu_87196104d4899bbb.png 800w, /redisraft-jepsen-guan-yu-shi-yong/img-04_hu_a4f84c29488f88cc.png 1600w, /redisraft-jepsen-guan-yu-shi-yong/img-04.png 1920w" width="1920"&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;详细日志
@@ -305,23 +305,23 @@ jepsen.redis.core=&amp;gt; (append/gen)
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;执行完前四个命令行后会发现启动了如下容器：&lt;/p&gt;
-&lt;img width="1061" alt="image" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-05.png"&gt;
+&lt;img width="1061" alt="image" src="img-05.png"&gt;
 &lt;p&gt;查看Dockerfile脚本发现，在 control 容器中你实际是部署了 &lt;a class="link" href="https://github.com/redislabs/jepsen-redisraft" target="_blank" rel="noopener"
  &gt;https://github.com/redislabs/jepsen-redisraft&lt;/a&gt; ，这个仓库是使用Clojure编写的、基于jepsen的、用来测试redisraft的工具。&lt;/p&gt;
 &lt;p&gt;运行起来后可以通过网页 http://127.0.0.1:8080/ 查看&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;运行记录
-&lt;img width="1272" alt="image" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-06.png"&gt;&lt;/p&gt;
+&lt;img width="1272" alt="image" src="img-06.png"&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;某次运行详细信息（每个文件功能待分析）
-&lt;img width="1624" alt="image" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-07.png"&gt;&lt;/p&gt;
+&lt;img width="1624" alt="image" src="img-07.png"&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;得益于jepsen-redisraft，下载、编译、启动、读写数据、验证数据等操作都可以自动化完成
-&lt;img width="1791" alt="image" src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-08.png"&gt;
-&lt;img src="/images/redisraft-jepsen-guan-yu-shi-yong.md/img-09.png"&gt;&lt;/p&gt;
+&lt;img width="1791" alt="image" src="img-08.png"&gt;
+&lt;img src="img-09.png"&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id="23-参考"&gt;2.3 参考

@@ -6,36 +6,36 @@
  &lt;/blockquote&gt;
 &lt;h2 id="背景"&gt;背景
 &lt;/h2&gt;&lt;p&gt;你是一个 RocksDB 进程，你的名字叫A。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi.md/img-01.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" class="gallery-image" data-flex-basis="300px" data-flex-grow="125" height="671" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-01.png" srcset="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-01_hu_9de81dba99989f4c.png 800w, /gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-01.png 839w" width="839"&gt;&lt;/p&gt;
 &lt;p&gt;（该图片来自rockdb.org）&lt;/p&gt;
 &lt;p&gt;很久很久以前，你承担着上层应用的 Put、Get 请求，你勤勤恳恳没有怨言。&lt;/p&gt;
 &lt;p&gt;突然有一天，你 Put、Get 的执行时间变长了，程序员们疯狂质问你，你为什么变慢了，你解释说是因为 Get 请求太多处理不过来了，要是能有其他 RocksDB 进程帮你承担一些请求就好了。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 2" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi.md/img-02.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 2" class="gallery-image" data-flex-basis="755px" data-flex-grow="314" height="343" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-02.png" srcset="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-02_hu_492cbc405df0453e.png 800w, /gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-02.png 1080w" width="1080"&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="改进1"&gt;改进1
 &lt;/h2&gt;&lt;p&gt;你灵机一动，想出了一个聪明的计划：将所有的写操作记录下来，就像人类记录历史一样。你创造了一个叫做binlog的文件，它像是你的日记，详细记录了你的每一个写操作。进程B，就像一个勤奋的学生，不断地阅读这本日记，就像通过&lt;code&gt;tail -f&lt;/code&gt;命令实时地学习你的新知识，并将这些知识应用到自己的数据库中。看着进程B如此努力，你忍不住露出了满意的微笑。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 3" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi.md/img-03.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 3" class="gallery-image" data-flex-basis="621px" data-flex-grow="258" height="417" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-03.png" srcset="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-03_hu_f28dc2af53ba74f9.png 800w, /gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-03.png 1080w" width="1080"&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="改进2"&gt;改进2
 &lt;/h2&gt;&lt;p&gt;随着时间的流逝，你的日记binlog变得越来越厚重，就像是一本越来越厚的百科全书。你注意到，旧的章节（早期的写操作）已经过时，不再被需要了。于是你决定，每当日记达到512MB时，就翻开新的一页，开始一个新的文件。同时，你还设立了一个周期性的清理计划，定期删除那些古老的故事，保持你的书架整洁有序。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 4" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi.md/img-04.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 4" class="gallery-image" data-flex-basis="574px" data-flex-grow="239" height="451" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-04.png" srcset="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-04_hu_281e8ae48e63af8b.png 800w, /gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-04.png 1080w" width="1080"&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="改进3"&gt;改进3
 &lt;/h2&gt;&lt;p&gt;不久后，你注意到即使把过去的故事清理掉了，存储空间还是越来越紧张。这不是因为binlog，而是因为你和进程B都在保存着一模一样的数据库数据，这种冗余让你感到有些浪费。你开始思考如何能够共享这些数据，而不是每个人都保存一份。你决定，是时候推翻旧有的架构，采用一种更为高效的数据共享方式了。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 5" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi.md/img-05.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 5" class="gallery-image" data-flex-basis="590px" data-flex-grow="246" height="439" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-05.png" srcset="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-05_hu_797c7e3661586172.png 800w, /gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-05.png 1080w" width="1080"&gt;&lt;/p&gt;
 &lt;p&gt;(事实上MySQL主从复制就是这种架构)&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="改进4"&gt;改进4
 &lt;/h2&gt;&lt;p&gt;你采取了一项大胆的措施，直接将自己的数据库目录共享给进程B，让进程B能够直接访问你的数据库文件，但进程B会限制自己只能以只读方式操作。这样一来，B进程可以直接读取你的数据，而不需要再维护一份自己的副本，从而节省了大量的存储空间。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 6" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi.md/img-06.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 6" class="gallery-image" data-flex-basis="547px" data-flex-grow="228" height="473" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-06.png" srcset="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-06_hu_39f051fb2e6c3972.png 800w, /gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-06.png 1080w" width="1080"&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="改进5"&gt;改进5
 &lt;/h2&gt;&lt;p&gt;然而，你很快发现了一个问题：每当你更新了数据，进程B并不能立即看到这些变化。为了解决这个问题，你尝试了一种简单粗暴的方法——重启进程B，强迫它重新加载数据，以便能看到最新的状态。但这种方法意味着每次同步都会有一段时间服务不可用，这显然是不可接受的。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 7" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi.md/img-07.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 7" class="gallery-image" data-flex-basis="552px" data-flex-grow="230" height="469" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-07.png" srcset="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-07_hu_24d6d586464f1ccc.png 800w, /gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-07.png 1080w" width="1080"&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="改进6"&gt;改进6
 &lt;/h2&gt;&lt;p&gt;为了彻底解决这个问题，你发明了一个更加精巧的同步机制。你利用RocksDB的WAL（预写日志）和MANIFEST文件追加写的性质。你开发了一个工具，周期性地读取这些文件，只同步那些自上次同步以来发生变化的数据。这样，进程B就可以在不中断服务的情况下，渐进式地更新数据，实现了零停机时间的数据同步。你自豪地看着你的这个新系统运行得如此顺畅，知道这将是一个新的开始。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 8" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi.md/img-08.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 8" class="gallery-image" data-flex-basis="444px" data-flex-grow="185" height="583" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-08.png" srcset="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-08_hu_8a132b5f6f0e70af.png 800w, /gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-08.png 1080w" width="1080"&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="当前-rocksdb-主从复制架构"&gt;当前 RocksDB 主从复制架构
 &lt;/h2&gt;&lt;p&gt;RocksDB数据分为内存和磁盘两部分。内存层面：由多个Memtable构成；磁盘层面：由WAL/MANINFEST/LOG/SST文件构成。&lt;/p&gt;
@@ -53,7 +53,7 @@
 &lt;p&gt;&lt;strong&gt;Get请求：&lt;/strong&gt; RocksDB请求流程会先在 Memtable 找数据，找不到就在 SST 文件中找。因为 catchup WAL保证了 Memtable 的完整性，catchup MANINFEST保证了元信息的完整性，并且SST具有不可更改性，所以从上的Get请求跟主处理流程一样。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img alt="图 9" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi.md/img-09.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 9" class="gallery-image" data-flex-basis="389px" data-flex-grow="162" height="614" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-09.png" srcset="/gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-09_hu_ac40bf193e49d920.png 800w, /gong-xi-cong-ming-de-ni-fa-ming-le-rocksdb-de-zhu-cong-fu-zhi/img-09.png 997w" width="997"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="link" href="https://github.com/facebook/rocksdb/wiki/Read-only-and-Secondary-instances" target="_blank" rel="noopener"
  &gt;https://github.com/facebook/rocksdb/wiki/Read-only-and-Secondary-instances&lt;/a&gt;&lt;/p&gt;</description></item><item><title>mysql异步复制、半同步复制、组复制</title><link>/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/</link><pubDate>Wed, 03 Mar 2021 20:51:04 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/</guid><description>
  &lt;blockquote&gt;
@@ -62,11 +62,11 @@
 
  &lt;/blockquote&gt;
 &lt;h2 id="异步复制"&gt;异步复制
-&lt;/h2&gt;&lt;p&gt;sorce不管replica的死活，写进binlog后，commit完成就算成功。如果最后一个event没有发给replica，主库就挂了，那么就会有丢失数据的风险。 &lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi.md/img-01.png"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;sorce不管replica的死活，写进binlog后，commit完成就算成功。如果最后一个event没有发给replica，主库就挂了，那么就会有丢失数据的风险。 &lt;img alt="图 1" class="gallery-image" data-flex-basis="571px" data-flex-grow="238" height="375" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/img-01.png" srcset="/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/img-01_hu_6b46d9bdd5175c2.png 800w, /mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/img-01.png 893w" width="893"&gt;&lt;/p&gt;
 &lt;h2 id="半同步复制"&gt;半同步复制
-&lt;/h2&gt;&lt;p&gt;通过官方的半同步插件，将binlog写完后，发送给replica，当replica写入到relay log后，在主库commit。这样可以最大情况保证数据能发送到replica。但是如果replica网络又问题，或者空间满了，导致ack返回时间慢、或者超时，这就会影响主库读写，所以还有个参数来控制&lt;code&gt;rpl_semi_sync_master_timeout&lt;/code&gt;。 &lt;img alt="图 2" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi.md/img-02.png"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;通过官方的半同步插件，将binlog写完后，发送给replica，当replica写入到relay log后，在主库commit。这样可以最大情况保证数据能发送到replica。但是如果replica网络又问题，或者空间满了，导致ack返回时间慢、或者超时，这就会影响主库读写，所以还有个参数来控制&lt;code&gt;rpl_semi_sync_master_timeout&lt;/code&gt;。 &lt;img alt="图 2" class="gallery-image" data-flex-basis="439px" data-flex-grow="182" height="488" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/img-02.png" srcset="/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/img-02_hu_1005d4881e4e704c.png 800w, /mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/img-02.png 893w" width="893"&gt;&lt;/p&gt;
 &lt;h2 id="组复制"&gt;组复制
-&lt;/h2&gt;&lt;p&gt;官方在5.7.17以后开始正式提供。安装就像半同步插件一样简单。 &lt;img alt="图 3" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi.md/img-03.png"&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;官方在5.7.17以后开始正式提供。安装就像半同步插件一样简单。 &lt;img alt="图 3" class="gallery-image" data-flex-basis="497px" data-flex-grow="207" height="350" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysql-yi-bu-fu-zhi-ban-tong-bu-fu-zhi-zu-fu-zhi/img-03.png" width="725"&gt;&lt;/p&gt;
 &lt;h2 id="参考链接"&gt;参考链接
 &lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/group-replication-primary-secondary-replication.html" target="_blank" rel="noopener"

@@ -7,7 +7,7 @@
 &lt;p&gt;最近，TiKV发布了新的存储引擎去适配Multi-Raft和云存储。https://github.com/tikv/raft-engine。在这个设计中，让我最受启发的是对IO的思考。&lt;/p&gt;
 &lt;p&gt;我们都知道云存储(云盘存储、云文件存储、对象存储)具有着非常大的存储空间、极高的吞吐和QPS性能，但是每次访问的IO时延却很大。虽然，随着云存储的技术发展，IO时延会不断地降低，但是想要做到本地nvme ssd的性能效果，还是有非常大的挑战。既然IO时延不好降低，索性从存储引擎方面入手，尽量减少IO操作、提高QPS和吞吐也能达到不错的效果。&lt;/p&gt;
 &lt;p&gt;TiKV的Raft-Engine的确也是这么做的，https://docs.pingcap.com/zh/tidb/stable/release-6.1.0&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/shen-du-jie-he-yun-cun-chu-de-cun-chu-yin-qing-she-ji-gou-xiang.md/img-01.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" class="gallery-image" data-flex-basis="1056px" data-flex-grow="440" height="320" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/shen-du-jie-he-yun-cun-chu-de-cun-chu-yin-qing-she-ji-gou-xiang/img-01.jpg" srcset="/shen-du-jie-he-yun-cun-chu-de-cun-chu-yin-qing-she-ji-gou-xiang/img-01_hu_f01f64fd1c154a.jpg 800w, /shen-du-jie-he-yun-cun-chu-de-cun-chu-yin-qing-she-ji-gou-xiang/img-01.jpg 1408w" width="1408"&gt;&lt;/p&gt;
 &lt;p&gt;在Raft-Engine里面，还有很多其他的技巧去进一步降低IO次数、提高并发等。比如，多个write请求通过write group方式合并到一起去操作，将多个IO请求搞成1个。&lt;/p&gt;
 &lt;p&gt;未来应该出现一款新的存储引擎，每次write有极少的IO请求、但单次IO的size可以很大、或者有着极高的并行写能力。比如：&lt;/p&gt;
 &lt;ul&gt;

@@ -12,7 +12,7 @@
 &lt;h2 id="tiproxy-介绍"&gt;Tiproxy 介绍
 &lt;/h2&gt;&lt;p&gt;tiproxy 在 &lt;a class="link" href="https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/release-1.4.0-beta.3" target="_blank" rel="noopener"
  &gt;2022年12月2日被operator支持&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/tiproxy-yuan-li-he-shi-xian.md/img-20230730133043.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="433px" data-flex-grow="180" height="666" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/tiproxy-yuan-li-he-shi-xian/img-20230730133043.png" srcset="/tiproxy-yuan-li-he-shi-xian/img-20230730133043_hu_23af3894c4d83de9.png 800w, /tiproxy-yuan-li-he-shi-xian/img-20230730133043.png 1202w" width="1202"&gt;&lt;/p&gt;
 &lt;p&gt;相关的设计文档可以从官方 &lt;a class="link" href="https://github.com/pingcap/tidb/blob/master/docs/design/2022-07-20-session-manager.md" target="_blank" rel="noopener"
  &gt;README&lt;/a&gt; 和 &lt;a class="link" href="https://docs.google.com/document/d/10c1tXP8B_AwgHMp_A2EuS83I5gz2QL1nH-EPwRdGScM/edit?pli=1" target="_blank" rel="noopener"
  &gt;goole doc&lt;/a&gt; 中查看&lt;/p&gt;
@@ -947,7 +947,7 @@
 &lt;p&gt;对比于tidb、tikv、pd等组件代码，tiproxy实简单很多，推荐大家学习下。&lt;/p&gt;
 &lt;h2 id="彩蛋"&gt;彩蛋
 &lt;/h2&gt;&lt;p&gt;在梳理上面4个问题的时，理清思路后，绘制了如下的内部交互图，有兴趣的可以自己研究下，下篇文章我们将对其进行说明。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Img" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/tiproxy-yuan-li-he-shi-xian.md/img-20230730171638.png"&gt;&lt;/p&gt;</description></item><item><title>TiProxy 尝鲜</title><link>/try-tiproxy/</link><pubDate>Sat, 29 Jul 2023 22:09:11 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/try-tiproxy/</guid><description>&lt;hr&gt;
+&lt;p&gt;&lt;img alt="Img" class="gallery-image" data-flex-basis="414px" data-flex-grow="172" height="1686" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/tiproxy-yuan-li-he-shi-xian/img-20230730171638.png" srcset="/tiproxy-yuan-li-he-shi-xian/img-20230730171638_hu_f3c4d3d492c7d510.png 800w, /tiproxy-yuan-li-he-shi-xian/img-20230730171638_hu_45efb56ee8e7ed06.png 1600w, /tiproxy-yuan-li-he-shi-xian/img-20230730171638_hu_d308b1c64bfb31c3.png 2400w, /tiproxy-yuan-li-he-shi-xian/img-20230730171638.png 2912w" width="2912"&gt;&lt;/p&gt;</description></item><item><title>TiProxy 尝鲜</title><link>/try-tiproxy/</link><pubDate>Sat, 29 Jul 2023 22:09:11 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/try-tiproxy/</guid><description>&lt;hr&gt;
 &lt;h2 id="说明"&gt;说明
 &lt;/h2&gt;&lt;p&gt;最近发现 tidb 有个 &lt;a class="link" href="https://github.com/pingcap/TiProxy" target="_blank" rel="noopener"
  &gt;https://github.com/pingcap/TiProxy&lt;/a&gt; 仓库，抱着好奇的心态想试试这个组件的使用效果。于是按照文档的介绍在本地环境使用tiup做了一些实验，现在将实验过程和实验结果分享给大家。&lt;/p&gt;

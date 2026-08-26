@@ -33,7 +33,7 @@
 &lt;/div&gt;&lt;p&gt;在这里面会上 FLUSH TABLES WITH READ LOCK。这就要求我们理解下隔离级别和事务之间的关系了。&lt;/p&gt;
 &lt;h2 id="update和ftwl关系"&gt;update和FTWL关系
 &lt;/h2&gt;&lt;p&gt;基于上面的问题，进行了如下4个实验&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/xtrabackup-bei-fen-yuan-li-yu-shi-xian.md/img-01.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" class="gallery-image" data-flex-basis="222px" data-flex-grow="92" height="1680" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-01.png" srcset="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-01_hu_ba05ccab75341e11.png 800w, /xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-01.png 1558w" width="1558"&gt;&lt;/p&gt;
 &lt;p&gt;查阅资料发现，FTWRL执行，主要包括3个步骤：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;1.上全局读锁(lock_global_read_lock)&lt;/li&gt;
@@ -51,10 +51,10 @@
 &lt;h2 id="xtrabckup备份流程图"&gt;xtrabckup备份流程图
 &lt;/h2&gt;&lt;p&gt;&lt;a class="link" href="https://www.cnblogs.com/linuxk/p/9372990.html" target="_blank" rel="noopener"
  &gt;https://www.cnblogs.com/linuxk/p/9372990.html&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 2" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/xtrabackup-bei-fen-yuan-li-yu-shi-xian.md/img-02.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 2" class="gallery-image" data-flex-basis="241px" data-flex-grow="100" height="934" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-02.png" srcset="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-02_hu_cd9cb1276a8e1994.png 800w, /xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-02.png 940w" width="940"&gt;&lt;/p&gt;
 &lt;h2 id="代码实现"&gt;代码实现
 &lt;/h2&gt;&lt;h3 id="主函数流程"&gt;主函数流程
-&lt;/h3&gt;&lt;p&gt;&lt;img alt="图 3" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/xtrabackup-bei-fen-yuan-li-yu-shi-xian.md/img-03.png"&gt;&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;img alt="图 3" class="gallery-image" data-flex-basis="162px" data-flex-grow="67" height="1643" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-03.png" srcset="/xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-03_hu_8368f5fcf291d80c.png 800w, /xtrabackup-bei-fen-yuan-li-yu-shi-xian/img-03.png 1112w" width="1112"&gt;&lt;/p&gt;
 &lt;h3 id="main函数"&gt;main函数
 &lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -1435,14 +1435,14 @@
 
  &lt;/blockquote&gt;
 &lt;p&gt;以上是本人一直使用的dump命令&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-01.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" class="gallery-image" data-flex-basis="628px" data-flex-grow="261" height="550" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-01.jpg" srcset="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-01_hu_7285ffc42bf03fef.jpg 800w, /mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-01.jpg 1440w" width="1440"&gt;&lt;/p&gt;
 &lt;h2 id="sql1"&gt;SQL1
 &lt;/h2&gt;
  &lt;blockquote&gt;
  &lt;p&gt;mysqldump -uroot -pxxx -R -E &amp;ndash;skip-add-drop-table &amp;ndash;set-gtid-purged=OFF &lt;strong&gt;&amp;ndash;master-data=2&lt;/strong&gt; demo&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;&lt;img alt="图 2" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-02.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 2" class="gallery-image" data-flex-basis="735px" data-flex-grow="306" height="470" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-02.jpg" srcset="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-02_hu_af75772aefb1650.jpg 800w, /mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-02.jpg 1440w" width="1440"&gt;&lt;/p&gt;
 &lt;p&gt;和上一组SQL对比，发现少了&lt;code&gt;START TRANSACTION /*!40100 WITH CONSISTENT SNAPSHOT */&lt;/code&gt; &lt;code&gt;SAVEPOINT sp&lt;/code&gt; &lt;code&gt;ROLLBACK TO SAVEPOINT sp&lt;/code&gt;命令，这也表明了，没有通过事务的方式进行dump。并且没有显式的使用UNLOCK TABLES。这就说明在dump过程中一直在锁表，直到会话结束，全局锁自动释放。&lt;/p&gt;
 &lt;h2 id="sql2"&gt;SQL2
 &lt;/h2&gt;
@@ -1450,7 +1450,7 @@
  &lt;p&gt;mysqldump -uroot -pxxx -R -E &lt;strong&gt;&amp;ndash;single-transaction&lt;/strong&gt; &amp;ndash;skip-add-drop-table &amp;ndash;set-gtid-purged=OFF demo&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;&lt;img alt="图 3" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-03.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 3" class="gallery-image" data-flex-basis="680px" data-flex-grow="283" height="508" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-03.jpg" srcset="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-03_hu_23c2c10f4f209b16.jpg 800w, /mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-03.jpg 1440w" width="1440"&gt;&lt;/p&gt;
 &lt;p&gt;去掉了**&amp;ndash;master-data=2** 参数，我们没有看到 &lt;code&gt;FLUSH /*!40101 LOCAL */ TABLES&lt;/code&gt;和&lt;code&gt;FLUSH TABLES WITH READ LOCK&lt;/code&gt;。&lt;/p&gt;
 &lt;h2 id="sql3"&gt;SQL3
 &lt;/h2&gt;
@@ -1458,7 +1458,7 @@
  &lt;p&gt;mysqldump -uroot -pxxxx -R -E &amp;ndash;skip-add-drop-table &amp;ndash;set-gtid-purged=OFF mysql&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;&lt;img alt="图 4" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-04.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 4" class="gallery-image" data-flex-basis="681px" data-flex-grow="284" height="507" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-04.jpg" srcset="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-04_hu_a40523b1faf433a2.jpg 800w, /mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-04.jpg 1440w" width="1440"&gt;&lt;/p&gt;
 &lt;p&gt;去掉 &lt;strong&gt;&amp;ndash;single-transaction&lt;/strong&gt; 参数，我们看到mysqldump上了&lt;code&gt;lock tables xxx read&lt;/code&gt;的表级别锁。&lt;/p&gt;
 &lt;h2 id="sql4"&gt;SQL4
 &lt;/h2&gt;
@@ -1466,7 +1466,7 @@
  &lt;p&gt;mysqldump -uroot -pxxxx -R -E &amp;ndash;skip-add-drop-table &lt;strong&gt;&amp;ndash;skip-lock-tables&lt;/strong&gt; &amp;ndash;set-gtid-purged=OFF mysql&lt;/p&gt;
 
  &lt;/blockquote&gt;
-&lt;p&gt;&lt;img alt="图 5" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie.md/img-05.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 5" class="gallery-image" data-flex-basis="798px" data-flex-grow="332" height="433" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-05.jpg" srcset="/mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-05_hu_d17281b727a804e7.jpg 800w, /mysqldump-yin-fa-shu-ju-ku-bu-ke-du-xie/img-05.jpg 1440w" width="1440"&gt;&lt;/p&gt;
 &lt;p&gt;加上**&amp;ndash;skip-lock-tables**解决了 &lt;code&gt;LOCK TABLES a READ /*!32311 LOCAL */&lt;/code&gt; &lt;code&gt;UNLOCK TABLES&lt;/code&gt; 的问题&lt;/p&gt;
 &lt;h2 id="结论"&gt;结论
 &lt;/h2&gt;&lt;p&gt;通过上述实验，我们就可以清晰的知道每个参数的作用了。&lt;/p&gt;

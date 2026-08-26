@@ -7,6 +7,6 @@
 &lt;p&gt;本文要介绍的是基于RocksDB改造的rocksdb-cloud项目。&lt;/p&gt;
 &lt;p&gt;首先，可以看下官方的example，这个example展示了如何读写数据，以及如何在无感知的情况下将SST文件上传到S3上。&lt;/p&gt;
 &lt;p&gt;本人对这段代码进行了debug，并进行深入研究，上传到S3的奥秘如下&lt;/p&gt;
-&lt;p&gt;&lt;img alt="图 1" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/images/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang.md/img-01.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="图 1" class="gallery-image" data-flex-basis="375px" data-flex-grow="156" height="920" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/img-01.jpg" srcset="/rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/img-01_hu_9445afe38831fac4.jpg 800w, /rockset-jiang-rocksdb-shu-ju-cun-chu-dao-s3-shang/img-01.jpg 1440w" width="1440"&gt;&lt;/p&gt;
 &lt;p&gt;实现的方法很巧妙，在执行Mem Table Flush的时候，先将文件写到本地，等RocksDB调用Close方法时再将这个文件Copy到S3上，然后删除本地文件。&lt;/p&gt;
 &lt;p&gt;通过这个方法，使得上传到S3的流程很简单，对主流程侵入很小；由于内容先写本地后写S3，所以整个SST的落盘IO会比直接写S3性能会好很多，可以保证读写数据的稳定。&lt;/p&gt;</description></item></channel></rss>
