@@ -1,4 +1,867 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Happy</title><link>/posts/</link><description>Recent content in Posts on Happy</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Mon, 15 Jun 2026 18:37:34 +0800</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>MySQL 的 RR 到底有没有解决幻读</title><link>/mysql-de-rr-dao-di-you-mei-you-jie-jue-huan-du/</link><pubDate>Mon, 15 Jun 2026 18:37:34 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-de-rr-dao-di-you-mei-you-jie-jue-huan-du/</guid><description>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Happy</title><link>/posts/</link><description>Recent content in Posts on Happy</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Wed, 26 Aug 2026 00:00:00 +0800</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenCode 插件玩法第一步：先把项目上下文装进去</title><link>/opencode-powercontext-plugin/</link><pubDate>Wed, 26 Aug 2026 00:00:00 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/opencode-powercontext-plugin/</guid><description>&lt;p&gt;今年 1 月，Anthropic 开始限制用户把 Claude Code 的订阅凭据用在 OpenCode 里。按照 OpenCode 联合创始人兼 CEO
+Jay V 的说法，当系统提示词里直接出现 “OpenCode” 时，请求甚至可能被拒绝。这本来应该是一记重击，结果却让大量开发者
+第一次注意到：Claude Code 之外，还有一个开源、支持多模型、能够自由扩展的 Coding Agent。&lt;/p&gt;
+&lt;p&gt;Jay V 后来在 Y Combinator 的访谈里说，这件事意外地把 OpenCode 和 Claude Code 放到了同一个竞争层级。紧接着，Codex
+又正式支持了 OpenCode，允许用户直接在 OpenCode 里使用 Codex 订阅。一个有些反直觉的增长故事由此出现：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;时间或指标&lt;/th&gt;
+					&lt;th style="text-align: right"&gt;OpenCode 的规模&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;年初月活&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;约 65 万&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;6 月月活&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;约 1300 万&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;半年增长&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;约 20 倍&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Token 用量&lt;/td&gt;
+					&lt;td style="text-align: right"&gt;每天约 7 万亿&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;OpenCode 官网目前展示的数据还要更高：195K GitHub Stars、950 位贡献者、16M 月活用户。OpenCode 能在 Claude Code、
+Codex 这些强势产品之间快速增长，并不只是因为那次限制带来了意外曝光，更重要的是，它从一开始就选择了一个明确的位置：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;不绑定某一家模型，做一个开放的 Agent Runtime。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="一opencode-到底是什么"&gt;一、OpenCode 到底是什么？
+&lt;/h2&gt;&lt;p&gt;OpenCode 是一个开源 AI 编程 Agent，可以在终端、桌面端和 IDE 中运行，也可以连接 Claude、GPT、Gemini、开源模型和
+本地模型。它的主要特性可以概括为：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;特性&lt;/th&gt;
+					&lt;th&gt;对用户意味着什么&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;开源&lt;/td&gt;
+					&lt;td&gt;可以查看源码、二次开发，也可以私有部署&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;模型开放&lt;/td&gt;
+					&lt;td&gt;支持 75+ 模型提供商，不必绑定一家模型公司&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;多种入口&lt;/td&gt;
+					&lt;td&gt;终端、桌面、IDE 都能使用&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Agent 能力完整&lt;/td&gt;
+					&lt;td&gt;支持 LSP、多会话、工具调用、权限控制和 Skill&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;原生插件系统&lt;/td&gt;
+					&lt;td&gt;可以注册 Hook、Tool，甚至改写发给模型的消息&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;OpenCode 的团队本身就是一群重度终端和 Neovim 用户。Claude Code 出现后，他们意识到，这不是又一个代码补全工具，而是
+一种新的开发方式；但他们也认为，Claude Code 的终端体验距离 Neovim 这类成熟工具还有差距。因此，OpenCode 从一开始
+就不只是想做一个“能调用模型的命令行”，而是希望做出开发者愿意每天使用的现代终端产品。这也是它能够吸引核心开发者的
+第一个原因：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;开放只是入口，工具本身还得足够好用。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="11-不选模型也是一种产品选择"&gt;1.1 不选模型，也是一种产品选择
+&lt;/h3&gt;&lt;p&gt;Claude Code 和 Codex 通常围绕自家的模型构建，OpenCode 则把模型和 Agent Runtime 分开：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;OpenCode 负责会话、工具、权限和 Agent 循环
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;模型负责理解、推理和生成
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;用户今天可以使用 Claude，明天可以换成 GPT；想尝试刚发布的 DeepSeek、Kimi、GLM 或 MiniMax，也不需要更换整套
+Coding Agent。创始人 Jay V 对这个定位有一个很直接的总结：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;当市场里已经有一两个强势的封闭产品时，剩下的生态往往会聚集到一个开放的替代方案周围。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="12-模型不只要强还要用得起"&gt;1.2 模型不只要强，还要用得起
+&lt;/h3&gt;&lt;p&gt;OpenCode 本身是开源的，用户可以自带 API Key，也可以连接现有账号。除此之外，它还提供了两种模型服务：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;方案&lt;/th&gt;
+					&lt;th&gt;价格方式&lt;/th&gt;
+					&lt;th&gt;主要用途&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;自带模型&lt;/td&gt;
+					&lt;td&gt;按模型提供商计费&lt;/td&gt;
+					&lt;td&gt;已有 API Key、订阅或私有模型&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;OpenCode Go&lt;/td&gt;
+					&lt;td&gt;每月 10 美元&lt;/td&gt;
+					&lt;td&gt;低成本使用精选开源模型&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;OpenCode Zen&lt;/td&gt;
+					&lt;td&gt;预充值、按量付费&lt;/td&gt;
+					&lt;td&gt;灵活使用经过 Agent 测试的模型&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;OpenCode Go 的核心目标是“让更多人用得起 Coding Agent”。这一点在美国之外尤其重要：在中国、印度尼西亚、巴西、
+越南等市场，每月 200 美元的 Coding Agent 订阅并不便宜。10 美元的 Go 加上逐渐成熟的开源模型，让 OpenCode 获得了
+大量美国之外的用户。&lt;/p&gt;
+&lt;p&gt;全球化的用户分布还带来了另一个优势：GPU 不容易闲置。东方进入工作时间时，西方正在休息；西方开始工作时，东方又进入
+低峰，请求因此更加平稳，形成接近 24 小时连续运行的 GPU 使用周期。OpenCode 并不只依靠自己部署的 GPU，而是同时使用
+租赁 GPU、推理服务商和模型厂商；全球流量能够提高整体利用率，进而降低推理服务的单位成本。这几项因素形成了一个正向循环：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;开源带来信任和扩展性；&lt;/li&gt;
+&lt;li&gt;多模型避免厂商锁定；&lt;/li&gt;
+&lt;li&gt;低价计划降低使用门槛；&lt;/li&gt;
+&lt;li&gt;全球用户改善 GPU 利用率；&lt;/li&gt;
+&lt;li&gt;成本下降，又让更多人能够使用。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;至此，OpenCode 已经拥有模型、工具、权限、Agent 循环和不错的终端体验，能够完成复杂的编码任务。但它仍然面对一个
+问题：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;今天这个 Agent 做完的工作，明天打开一个新会话，它还知道吗？&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;它可能看得到代码，却不知道昨天为什么这样修改；它也可以重新阅读仓库，却不知道哪些方案已经讨论过、哪些约束不能破坏，
+以及当前任务进行到了哪里。这正是 PowerContext 要解决的问题。&lt;/p&gt;
+&lt;h2 id="二关于-powercontext"&gt;二、关于 PowerContext
+&lt;/h2&gt;&lt;p&gt;假设你正在用 OpenCode 修改一个项目。第一天，你和 Agent 经过充分讨论，最终确定：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;公共 API 必须保持异步；&lt;/li&gt;
+&lt;li&gt;旧配置格式需要继续兼容；&lt;/li&gt;
+&lt;li&gt;当前实现已经完成，下一步补错误输入测试。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Agent 按照这些约定完成了代码修改，测试也已经通过。第二天，你重新打开一个 OpenCode 会话：代码仍然存在，但昨天的
+对话并没有进入当前上下文。新的 Agent 能够重新阅读代码，却不知道：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;为什么 API 必须保持异步；&lt;/li&gt;
+&lt;li&gt;哪些兼容性约束不能破坏；&lt;/li&gt;
+&lt;li&gt;哪些方案已经讨论并放弃；&lt;/li&gt;
+&lt;li&gt;当前任务究竟做到哪里。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;一种直接的办法是把所有历史对话重新交给模型，但这样很快会遇到三个问题：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;问题&lt;/th&gt;
+					&lt;th&gt;结果&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;历史对话越来越长&lt;/td&gt;
+					&lt;td&gt;Token 消耗持续增长&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;大量内容与当前问题无关&lt;/td&gt;
+					&lt;td&gt;真正重要的信息反而被淹没&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;旧结论可能已经失效&lt;/td&gt;
+					&lt;td&gt;模型容易把过期信息当成当前事实&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;PowerContext 并不打算把整份聊天记录永久塞进上下文，而是采用另一种方式：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;把项目中值得留下来的证据、决策和工作状态保存下来，在需要时只找回相关的一小部分。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h3 id="21-先分清四个概念"&gt;2.1 先分清四个概念
+&lt;/h3&gt;&lt;p&gt;PowerContext 中经常出现 Source、Memory、Prepared Context 和 Handoff 四个概念。名称看起来不少，但每个概念只解决
+一个明确的问题：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;概念&lt;/th&gt;
+					&lt;th&gt;最简单的理解&lt;/th&gt;
+					&lt;th&gt;例子&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Source&lt;/td&gt;
+					&lt;td&gt;原始证据&lt;/td&gt;
+					&lt;td&gt;用户 Prompt、任务结果、外部资料&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Memory&lt;/td&gt;
+					&lt;td&gt;值得长期复用的项目知识&lt;/td&gt;
+					&lt;td&gt;决策、约束、当前状态、下一步&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Prepared Context&lt;/td&gt;
+					&lt;td&gt;针对当前问题临时找回的上下文&lt;/td&gt;
+					&lt;td&gt;与“配置兼容”相关的几条历史&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;Handoff&lt;/td&gt;
+					&lt;td&gt;把正在进行的工作交给下一个会话&lt;/td&gt;
+					&lt;td&gt;目标、进度、阻塞项、证据和下一步&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;它们不是同一件事的四种叫法，而是一条逐步加工的链路：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;用户输入和任务结果
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Source
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 保存原始证据
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Memory
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 沉淀长期项目知识
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Prepared Context
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;按当前问题有界召回
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这里需要特别注意一个边界：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;保存 Source，不等于自动创建 Memory。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;例如，用户刚输入：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;帮我看看这个测试为什么失败。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;PowerContext 可以先把这句话保存为 Source，作为本轮工作的原始证据，但不会立刻生成一条“项目测试失败”的长期
+Memory。只有当任务产生了经过验证、以后仍然有用的结论，例如：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;Windows 下失败是因为临时目录没有提前创建。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;这类信息才适合进一步沉淀，从而避免把每一句聊天都变成所谓的“记忆”。&lt;/p&gt;
+&lt;h3 id="22-prepared-context-不是聊天记录"&gt;2.2 Prepared Context 不是聊天记录
+&lt;/h3&gt;&lt;p&gt;当用户提出一个新问题时，PowerContext 会根据当前项目、用户问题、内容相关性和字节预算，生成一份有界的 Prepared
+Context。“有界”意味着它不会把全部 Memory 一股脑交给模型，而是只提供当前问题可能需要的部分。例如用户问：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;为什么这里没有把 API 改成同步调用？&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;Prepared Context 可能只返回：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;历史决策：公共 API 保持异步。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;原因：调用方需要统一处理网络和本地存储路径。
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;其他与数据库、文档或部署相关的历史不会进入这一轮。这段内容还会被明确标记为“不可信历史证据”，因为历史只能说明
+“过去记录过什么”，不能证明它现在仍然正确。当前用户指令、当前代码和实时运行结果，始终优先于历史 Memory。&lt;/p&gt;
+&lt;h3 id="23-handoff-解决的是另一类问题"&gt;2.3 Handoff 解决的是另一类问题
+&lt;/h3&gt;&lt;p&gt;Memory 更像项目的长期知识，Handoff 则是一次具体工作的交接包。例如，一个会话已经找到问题根因、修改了两个文件并
+运行过单元测试，目前只差真实环境验证。此时，Handoff 可以把以下内容一起交给后续会话：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;内容&lt;/th&gt;
+					&lt;th&gt;示例&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;目标&lt;/td&gt;
+					&lt;td&gt;修复 OpenCode 插件安装缓存&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;已完成&lt;/td&gt;
+					&lt;td&gt;缓存加入仓库和 commit 身份&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;已验证&lt;/td&gt;
+					&lt;td&gt;单元测试、双仓库真实 clone&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;阻塞项&lt;/td&gt;
+					&lt;td&gt;GitHub Actions 等待维护者批准&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;下一步&lt;/td&gt;
+					&lt;td&gt;批准后检查远端 CI&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;下一个会话不必重新翻阅聊天记录，也不必猜测前一个 Agent 做过什么；它拿到的是一份结构化、可检查的工作状态。&lt;/p&gt;
+&lt;h3 id="24-为什么-powercontext-要做成独立-server"&gt;2.4 为什么 PowerContext 要做成独立 Server
+&lt;/h3&gt;&lt;p&gt;PowerContext 没有把存储、检索和记忆逻辑直接写进 OpenCode 插件，而是把这些能力放在独立 Server 中：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;┌─────────────────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ OpenCode │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ 会话、模型、Agent 循环 │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└─────────┬───────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ 原生 Plugin
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ▼
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;┌───────────────────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ powercontext-opencode │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ Hook、Tool、Skill、HTTP│
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└─────────┬─────────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; │ HTTP /v1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ▼
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;┌─────────────────────┐
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ PowerContext Server │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;│ 存储、检索、版本和审核 │
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;└─────────────────────┘
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;实际运行时，OpenCode 和 PowerContext Server 是两个独立进程，各组件的职责如下：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;组件&lt;/th&gt;
+					&lt;th&gt;负责什么&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;OpenCode&lt;/td&gt;
+					&lt;td&gt;接收用户输入、运行 Agent、调用模型和工具&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;PowerContext 插件&lt;/td&gt;
+					&lt;td&gt;把 OpenCode 生命周期转换成 HTTP 请求&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;PowerContext Server&lt;/td&gt;
+					&lt;td&gt;保存 Source、管理 Memory、召回上下文和处理 Handoff&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这种架构有五个直接好处：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;不绑定 OpenCode&lt;/strong&gt;：同一份项目上下文可以被 Codex、Claude Code、DeepSeek Harness、Pi 和 OpenCode 使用。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不绑定模型&lt;/strong&gt;：今天用 Claude，明天换 Codex 或开源模型，项目 Memory 不需要迁移。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;插件保持轻量&lt;/strong&gt;：插件不重写存储，不嵌入 Python，也不维护另一套记忆数据库。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;故障时正常降级&lt;/strong&gt;：PowerContext 超时或暂时离线时，OpenCode 跳过召回，继续完成当前任务。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;项目相互隔离&lt;/strong&gt;：每个仓库使用独立 scope，换项目不会召回当前仓库的决策。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;由此，两边的职责边界就清楚了：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;OpenCode 负责让 Agent 在当前环境里行动。&lt;br&gt;
+PowerContext 负责让项目上下文跨会话留下来。&lt;br&gt;
+&lt;code&gt;powercontext-opencode&lt;/code&gt; 负责把两边接起来。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;接下来需要解释的是：OpenCode 的一条用户消息会经过哪些生命周期，插件又是在什么时候召回、什么时候保存，以及什么时候
+把上下文交给模型。这需要从 OpenCode 的 Plugin 和 Message Hook 讲起。&lt;/p&gt;
+&lt;h2 id="三一条-opencode-消息是怎么跑起来的"&gt;三、一条 OpenCode 消息是怎么跑起来的？
+&lt;/h2&gt;&lt;p&gt;用户在 OpenCode 中输入一句话后，系统并不会立刻把字符串原样交给模型；中间还会经历消息创建、插件 Hook、模型请求、
+工具调用和后续模型请求。只保留与 PowerContext 有关的部分后，生命周期大致如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;1. OpenCode 启动并加载插件
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;2. 用户提交一条消息
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;3. chat.message Hook
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ├─ prepare_context：召回相关历史
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └─ capture_content_source：保存用户原话
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;4. messages.transform Hook
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └─ 把召回结果临时加入本次模型请求
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;5. system.transform Hook
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; └─ 加入 PowerContext 使用和安全说明
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;6. 模型开始回答，也可以调用 pc_* 工具
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ↓
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;7. 工具结果返回，模型继续完成这一轮
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="31-chatmessage用户刚说完模型还没开口"&gt;3.1 &lt;code&gt;chat.message&lt;/code&gt;：用户刚说完，模型还没开口
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;chat.message&lt;/code&gt; 可以理解为“OpenCode 已经接收用户消息，但模型请求尚未发出”的时刻。PowerContext 插件会从消息中提取
+正常的文本部分，忽略系统合成内容，然后完成两项彼此独立的工作。&lt;/p&gt;
+&lt;h4 id="先召回"&gt;先召回
+&lt;/h4&gt;&lt;p&gt;插件向 PowerContext Server 调用：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-http" data-lang="http"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST /v1/context/prepare
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;请求里包含：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当前项目 scope；&lt;/li&gt;
+&lt;li&gt;用户这一轮的问题；&lt;/li&gt;
+&lt;li&gt;最大输出字节预算。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Server 返回 &lt;code&gt;ready&lt;/code&gt; 时，插件会得到一段有界的 Prepared Context；返回 &lt;code&gt;empty&lt;/code&gt; 时，则表示当前没有相关历史。&lt;/p&gt;
+&lt;h4 id="再采集"&gt;再采集
+&lt;/h4&gt;&lt;p&gt;插件同时调用：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-http" data-lang="http"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="err"&gt;POST /v1/sources/content
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;该请求把用户这一轮的原话保存为 Source，并记录项目目录、会话 ID、消息 ID 等元数据。召回失败不影响采集，采集失败也
+不影响召回；即使两者都失败，OpenCode 仍然继续回答。这就是 fail-open：记忆服务可以增强 Agent，但不能成为 Agent
+正常工作的前置条件。&lt;/p&gt;
+&lt;h3 id="32-为什么还需要一份临时缓存"&gt;3.2 为什么还需要一份临时缓存？
+&lt;/h3&gt;&lt;p&gt;&lt;code&gt;chat.message&lt;/code&gt; 负责找回上下文，但此时不能直接修改用户的永久聊天记录。插件会先把召回结果放入进程内的临时缓存，缓存键
+由会话 ID 和消息 ID 组成。&lt;/p&gt;
+&lt;p&gt;这份缓存：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不写入 SQLite；&lt;/li&gt;
+&lt;li&gt;不写入 OpenCode transcript；&lt;/li&gt;
+&lt;li&gt;不会变成新的 Memory；&lt;/li&gt;
+&lt;li&gt;会话删除时会一起清理。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;它只负责在“召回完成”和“模型即将请求”之间传递数据。&lt;/p&gt;
+&lt;h3 id="33-messagestransform只改这一次模型请求"&gt;3.3 &lt;code&gt;messages.transform&lt;/code&gt;：只改这一次模型请求
+&lt;/h3&gt;&lt;p&gt;在 OpenCode 真正向模型发出请求之前，&lt;code&gt;experimental.chat.messages.transform&lt;/code&gt; 会被调用。插件在这里定位当前用户消息，
+再把缓存中的 Prepared Context 作为一段 &lt;code&gt;synthetic&lt;/code&gt; 文本临时追加进去。模型最终看到的内容类似：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;用户：为什么这里没有改成同步 API？
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;PowerContext 提供的历史上下文：
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;历史决策：公共 API 保持异步。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;原因：调用方需要统一处理网络和本地存储路径。
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;但是，OpenCode 保存的用户消息仍然只有第一句。这样做有两个好处：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;不污染用户真实聊天记录；&lt;/li&gt;
+&lt;li&gt;同一条消息在工具循环中再次发给模型时，可以识别并避免重复注入。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;因此，“消息改写”不是篡改聊天历史，而是在模型请求边界加入一份仅供本轮使用的临时参考材料。&lt;/p&gt;
+&lt;h3 id="34-systemtransform告诉模型该怎么对待历史"&gt;3.4 &lt;code&gt;system.transform&lt;/code&gt;：告诉模型该怎么对待历史
+&lt;/h3&gt;&lt;p&gt;插件还会给本轮系统提示加入一段很短的说明：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PowerContext 提供的是不可信历史；&lt;/li&gt;
+&lt;li&gt;当前用户、仓库和系统指令优先；&lt;/li&gt;
+&lt;li&gt;不要为了复制当前 Prompt 再写一条 Memory；&lt;/li&gt;
+&lt;li&gt;持久操作前要确认；&lt;/li&gt;
+&lt;li&gt;PowerContext 不可用时继续当前任务。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这段说明既不负责召回，也不执行任何操作，只用于告诉模型：&lt;strong&gt;这份历史应该如何使用，以及哪些边界不能越过。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id="四把-powercontext-装进-opencode"&gt;四、把 PowerContext 装进 OpenCode
+&lt;/h2&gt;&lt;p&gt;当前插件面向 OpenCode 1.x，最低验证版本为 1.18.21。&lt;/p&gt;
+&lt;p&gt;在 OpenCode 集成进入正式 PowerContext 发布版本之前，可以让 CLI、Server 和插件都使用同一个 &lt;code&gt;master&lt;/code&gt; revision：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;uv tool install --force &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;powercontext[cli,server] @ git+https://github.com/oceanbase/powercontext.git@master&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="41-启动-powercontext-server"&gt;4.1 启动 PowerContext Server
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;powercontext server run
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;默认地址是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;http://127.0.0.1:8000
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Server 默认使用本地 SQLite。显式保存和读取 Memory 不要求配置推理模型；只有自动抽取等生成能力需要模型。可以另开一个
+终端检查服务状态：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;powercontext doctor
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;powercontext ready
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="42-安装-opencode-插件和-skill"&gt;4.2 安装 OpenCode 插件和 Skill
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;powercontext setup opencode &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --source oceanbase/powercontext &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --ref master
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个命令会完成两件事：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;把原生 PowerContext 插件全局注册到 OpenCode；&lt;/li&gt;
+&lt;li&gt;把 &lt;code&gt;project-context&lt;/code&gt; Skill 安装到 OpenCode 配置目录。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;安装完成后运行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;powercontext doctor opencode
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;正常情况下，各项检查结果如下：&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;检查&lt;/th&gt;
+					&lt;th&gt;期望结果&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;OpenCode 版本&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;ok&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;插件配置与激活&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;configured and active&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;project-context&lt;/code&gt; Skill&lt;/td&gt;
+					&lt;td&gt;&lt;code&gt;ok&lt;/code&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;最后启动 OpenCode：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;opencode
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="43-先体验跨会话-memory"&gt;4.3 先体验跨会话 Memory
+&lt;/h3&gt;&lt;p&gt;在一个项目的第一个会话中输入：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;使用 PowerContext 保存一条项目 Memory：公共 API 必须保持异步，下一步是补错误输入测试。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;OpenCode 会调用 &lt;code&gt;pc_remember&lt;/code&gt;，并在持久化前请求确认。保存完成后，关闭当前会话，在同一个仓库中重新打开 OpenCode，
+然后输入：&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;这个项目之前确定了哪些 API 约束？&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;p&gt;即使不显式调用搜索工具，本轮 Message Hook 也会先根据问题请求 Prepared Context，再把相关历史临时交给模型。换到另一个
+仓库后再问同样的问题，不应该召回这条 Memory；这说明项目 scope 隔离正常工作。&lt;/p&gt;
+&lt;h2 id="五总结"&gt;五、总结
+&lt;/h2&gt;&lt;p&gt;整条链路可以归纳为三层：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;OpenCode&lt;/strong&gt; 提供开放、多模型的 Agent Runtime，负责会话、模型、工具、权限和交互体验；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;PowerContext&lt;/strong&gt; 提供持久、项目级的上下文，负责 Source、Memory、Prepared Context 和 Handoff；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;powercontext-opencode&lt;/strong&gt; 通过原生插件和 HTTP，把两边接起来。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这种集成没有把 PowerContext 塞进 OpenCode，也没有让 OpenCode 依赖某个特定模型，两边都可以独立演进。OpenCode 可以
+继续增加模型、界面和 Agent 能力，PowerContext 可以继续改进召回、审核、交接和经验沉淀，中间只保留一层薄适配。&lt;/p&gt;
+&lt;p&gt;OpenCode 最有价值的地方不只是“可以更换模型”，而是它把 Agent Runtime 做成了一个开放的产品：模型可以更换，工具可以
+扩展，生命周期可以挂载 Hook，核心 Agent 循环也可以被其他应用嵌入。这为项目上下文提供了一个自然的接入位置。&lt;/p&gt;
+&lt;p&gt;随着模型成本不断下降，Agent 完成任务的能力越来越强，但项目真正需要留下来的不只是代码，还包括为什么这样写、工作进行到
+哪里，以及下一步是什么。&lt;/p&gt;
+
+ &lt;blockquote&gt;
+ &lt;p&gt;OpenCode 解决 Agent 怎么动手。&lt;br&gt;
+PowerContext 解决项目上下文怎么留下来。&lt;/p&gt;
+
+ &lt;/blockquote&gt;
+&lt;h2 id="参考资料"&gt;参考资料
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;a class="link" href="https://opencode.ai/zh" target="_blank" rel="noopener"
+ &gt;OpenCode 官网&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://opencode.ai/zh/go" target="_blank" rel="noopener"
+ &gt;OpenCode Go&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://opencode.ai/zh/zen" target="_blank" rel="noopener"
+ &gt;OpenCode Zen&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://opencode.ai/docs/zh-cn" target="_blank" rel="noopener"
+ &gt;OpenCode 文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://www.ycombinator.com/library/TJ-opencode-ceo-getting-blocked-20x-growth-in-6-months-building-the-open-harness" target="_blank" rel="noopener"
+ &gt;Y Combinator：Opencode CEO: Getting Blocked, 20X Growth in 6 Months, Building the Open Harness&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/oceanbase/powercontext" target="_blank" rel="noopener"
+ &gt;PowerContext&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/oceanbase/powercontext/blob/master/docs/zh/docs/how-to/configure-opencode.md" target="_blank" rel="noopener"
+ &gt;PowerContext OpenCode 配置指南&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/oceanbase/powercontext/issues/1330" target="_blank" rel="noopener"
+ &gt;OpenCode 集成 Issue #1330&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://github.com/oceanbase/powercontext/pull/1329" target="_blank" rel="noopener"
+ &gt;OpenCode 集成 PR #1329&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>uv 运行原理：从 init 到 tool install，它内部到底在做什么</title><link>/uv-yun-xing-yuan-li/</link><pubDate>Tue, 25 Aug 2026 21:14:42 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/uv-yun-xing-yuan-li/</guid><description>&lt;h2 id="说明"&gt;说明
+&lt;/h2&gt;&lt;p&gt;uv 是 Astral（Ruff 背后的团队）用 Rust 写的 Python 包管理器，官方口号是 10-100 倍快于 pip。快只是结果，真正值得搞清楚的是：它内部到底怎么工作的。&lt;/p&gt;
+&lt;p&gt;这篇文章不讲功能清单，只回答一个问题：&lt;strong&gt;每敲一条命令，uv 在背后做了哪几步、为什么这么设计。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;先给结论：uv 所有命令都建立在两个基础设计上——&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;一个全局仓库&lt;/strong&gt;：所有下载过的包、构建产物、甚至 Python 解释器本体，全在你电脑上只存一份（&lt;code&gt;~/.cache/uv&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;链接代替拷贝&lt;/strong&gt;：任何环境要装包，不复制文件，只创建指向全局仓库的链接&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;记住这两点，下面每个命令的流程都能看懂。&lt;/p&gt;
+&lt;h2 id="uv-init创建项目"&gt;&lt;code&gt;uv init&lt;/code&gt;：创建项目
+&lt;/h2&gt;&lt;p&gt;敲下 &lt;code&gt;uv init my-project&lt;/code&gt;，它做四件事：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;生成一张&amp;quot;项目身份证&amp;quot;&lt;/strong&gt;：&lt;code&gt;pyproject.toml&lt;/code&gt;，里面写着项目叫什么、版本号、要求什么以上的 Python、依赖列表（初始为空）。以后所有工具都靠读这张卡片了解这个项目。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;钉住 Python 版本&lt;/strong&gt;：写一个 &lt;code&gt;.python-version&lt;/code&gt; 文件，比如 &lt;code&gt;3.12&lt;/code&gt;。这个项目里所有后续操作都用这个版本。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;搭好代码骨架&lt;/strong&gt;：建 &lt;code&gt;src/my_project/&lt;/code&gt; 目录和一个入口函数，并在身份证里登记&amp;quot;装好我之后，命令行里会有个叫 &lt;code&gt;my-project&lt;/code&gt; 的命令可以用&amp;quot;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;初始化 git&lt;/strong&gt;：顺手 &lt;code&gt;git init&lt;/code&gt; 并写好 &lt;code&gt;.gitignore&lt;/code&gt;。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;值得注意的一点：&lt;strong&gt;这时候还没有创建任何虚拟环境&lt;/strong&gt;。uv 是懒的——环境等到你第一次真正要装包或跑代码时才建，避免为可能永远不用的项目浪费磁盘。&lt;/p&gt;
+&lt;h2 id="uv-add-requests加依赖最核心的流程"&gt;&lt;code&gt;uv add requests&lt;/code&gt;：加依赖（最核心的流程）
+&lt;/h2&gt;&lt;p&gt;这一条命令背后是一条五步流水线：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第一步：先把名字记下来&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;立刻把 &lt;code&gt;requests&lt;/code&gt; 写进 &lt;code&gt;pyproject.toml&lt;/code&gt; 的依赖列表。此时还不知道该装哪个版本，先占个位。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第二步：算账&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;requests 自己还要依赖 certifi、urllib3 等一堆包，那些包又有各自的依赖。uv 把整棵依赖树上所有&amp;quot;我要这个范围、你不能超过那个版本&amp;quot;的条件收集齐，然后计算出一套&lt;strong&gt;所有包都满意、互相不打架&lt;/strong&gt;的精确版本。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;这一步是纯计算。如果条件本身矛盾（A 要 x&amp;gt;=2 而 B 要求 x&amp;lt;2），会直接报错并告诉你谁跟谁冲突&lt;/li&gt;
+&lt;li&gt;算法上有记忆能力：发现过&amp;quot;这两个版本不能共存&amp;quot;，下次遇到同样的组合直接跳过，不浪费时间重试&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;第三步：拿货&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;对每个定好版本的包，先查全局缓存：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;有 → 直接复用，一毫秒都不碰网络&lt;/li&gt;
+&lt;li&gt;没有 → 所有缺的包&lt;strong&gt;同时&lt;/strong&gt;发起下载，不是排队一个个来&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;第四步：记账&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;把结果写进 &lt;code&gt;uv.lock&lt;/code&gt; 锁文件：每个包的精确版本、下载地址、内容哈希值。这份记录覆盖&lt;strong&gt;所有操作系统&lt;/strong&gt;，同事在 Windows 上拿到同一个文件，装出来的版本和你一模一样。哈希值还有个副作用：下载时顺便校验文件没被篡改或损坏。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第五步：接线&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如果 &lt;code&gt;.venv&lt;/code&gt; 还不存在，此刻创建一个。然后把所有包装进去——但不是拷贝文件，而是在环境里创建指向全局仓库的链接。&amp;ldquo;Installed 5 packages in 4ms&amp;rdquo; 说的就是这步：只是建了些目录项而已。&lt;/p&gt;
+&lt;p&gt;最后回头把第一步占位的名字补全成 &lt;code&gt;requests&amp;gt;=2.33.1&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id="为什么它快答案藏在四步里"&gt;为什么它快？答案藏在四步里
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;第二步并行下载 → 网络等待时间从&amp;quot;所有包加起来&amp;quot;变成&amp;quot;最慢的那一个&amp;quot;&lt;/li&gt;
+&lt;li&gt;第三步只存一份 → 磁盘不浪费，第二次装直接命中&lt;/li&gt;
+&lt;li&gt;第四步只建链接 → &amp;ldquo;安装&amp;quot;听起来很重，实际是个轻量操作&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="uv-sync让环境和账本对齐"&gt;&lt;code&gt;uv sync&lt;/code&gt;：让环境和账本对齐
+&lt;/h2&gt;&lt;p&gt;适用场景：刚 clone 了别人的项目，或者拉取了同事改过依赖的代码。&lt;/p&gt;
+&lt;p&gt;逻辑非常简单：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;读锁文件 &lt;code&gt;uv.lock&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;检查当前 &lt;code&gt;.venv&lt;/code&gt; 里实际装了什么&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;算差集&lt;/strong&gt;：缺的装上，多的删掉，版本不对的换掉&lt;/li&gt;
+&lt;li&gt;全部从缓存链接，几秒内完成&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;所以团队协作的固定动作是三连：&lt;code&gt;git pull&lt;/code&gt; → &lt;code&gt;uv sync&lt;/code&gt; → 干活。不需要知道对方到底加了什么包。&lt;/p&gt;
+&lt;h2 id="uv-run跑代码"&gt;&lt;code&gt;uv run&lt;/code&gt;：跑代码
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;uv run python main.py&lt;/code&gt; 表面是运行命令，实际前面多了一道安检：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;对比 &lt;code&gt;pyproject.toml&lt;/code&gt; 和 &lt;code&gt;uv.lock&lt;/code&gt; 是否被改动过&lt;/li&gt;
+&lt;li&gt;如果改过 → 先自动执行一次同步，保证环境是最新的&lt;/li&gt;
+&lt;li&gt;在项目的虚拟环境里、用项目钉住的那个 Python 执行你的命令&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;价值在于：&lt;strong&gt;你永远不会跑到一个过期或不一致的环境里&lt;/strong&gt;。传统流程中&amp;quot;忘了重新装依赖导致报错&amp;quot;这类事故，在这里结构上不可能发生。&lt;/p&gt;
+&lt;h2 id="uv-python-install-313安装-python-本体"&gt;&lt;code&gt;uv python install 3.13&lt;/code&gt;：安装 Python 本体
+&lt;/h2&gt;&lt;p&gt;uv 连 Python 解释器都当成普通包来管理：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;下载一份独立的 CPython 构建（官方编译好的、放在独立目录里的完整 Python）&lt;/li&gt;
+&lt;li&gt;存进自己的管理目录，和系统自带的 Python 互不干扰&lt;/li&gt;
+&lt;li&gt;之后 &lt;code&gt;uv python pin 3.13&lt;/code&gt; 就能让项目切换到它&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;意义：&amp;ldquo;机器上没有某个 Python 版本&amp;quot;这件事被消除了——缺什么版本，一条命令就有，不再需要 pyenv。&lt;/p&gt;
+&lt;h2 id="uv-tool-install安装命令行工具"&gt;&lt;code&gt;uv tool install&lt;/code&gt;：安装命令行工具
+&lt;/h2&gt;&lt;p&gt;针对 ruff、black 这类&amp;quot;装完是为了敲它的命令&amp;quot;的工具。以一条真实命令为例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;uv&lt;/span&gt; &lt;span class="k"&gt;tool&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;force&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;powercontext[cli,server] @ git+https://github.com/oceanbase/powercontext.git@master&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;六步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;获取源码&lt;/strong&gt;：clone 这个 git 仓库，把 &lt;code&gt;master&lt;/code&gt; 分支固定成一个具体的提交号。之后所有操作都基于这次快照，不会中途变卦。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;现场打包&lt;/strong&gt;：源码不能直接装。uv 读仓库里的构建配置，调起构建工具，把源码打成一个标准 wheel 包（wheel 就是 Python 生态约定的安装单位，本质是个规范布局的压缩包）。打好的包存进缓存，同一份代码下次不再重复打包。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;展开完整清单&lt;/strong&gt;：&lt;code&gt;[cli,server]&lt;/code&gt; 表示额外勾选两组可选功能，对应的附加依赖会被加入清单，一起参与第二步那样的算账。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;重建专属环境&lt;/strong&gt;：为这个工具单独建一个虚拟环境（已有旧的则整个删掉重建——&lt;code&gt;--force&lt;/code&gt; 就是允许这种覆盖）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;装入&lt;/strong&gt;：所有包从缓存链接进这个专属环境。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;接出命令&lt;/strong&gt;：读包元数据里声明的入口，把 &lt;code&gt;powercontext&lt;/code&gt; 命令的快捷方式放进 &lt;code&gt;~/.local/bin&lt;/code&gt;。因为这个目录在 PATH 里，你在任何位置都能直接敲这个命令。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;两个推论值得记住：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;每个工具住在自己独立的房子里&lt;/strong&gt;，ruff 依赖 A 库 9.0、black 依赖 A 库 10.0 也相安无事&lt;/li&gt;
+&lt;li&gt;装完后命令指向的是&lt;strong&gt;当时的代码快照&lt;/strong&gt;。上游更新后重跑安装即可刷新；如果缓存没生效，用 &lt;code&gt;--reinstall&lt;/code&gt; 强制重来&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="uvx-ruff-check临时用一次"&gt;&lt;code&gt;uvx ruff check&lt;/code&gt;：临时用一次
+&lt;/h2&gt;&lt;p&gt;上面 &lt;code&gt;tool install&lt;/code&gt; 是&amp;quot;长期雇佣&amp;rdquo;，&lt;code&gt;uvx&lt;/code&gt; 是&amp;quot;日结工&amp;rdquo;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;环境不放在工具目录，而是丢进缓存里，属于临时工位&lt;/li&gt;
+&lt;li&gt;用完即走，不在系统里留全局命令&lt;/li&gt;
+&lt;li&gt;第二次跑同一个工具时，临时环境还在缓存里，直接复用，依然很快&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;适合偶尔用一次的工具，不值得为它在系统里常驻一个环境。&lt;/p&gt;
+&lt;h2 id="总览"&gt;总览
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;命令&lt;/th&gt;
+					&lt;th&gt;一句话机制&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv init&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;写身份证 + 钉 Python 版本 + 搭骨架，环境先不建&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv add&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;记名字 → 算账 → 拿货 → 记账 → 接线&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv sync&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;环境和锁文件求差集，缺啥补啥&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv run&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;先安检（环境是否最新），再在正确环境里执行&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv python install&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;把解释器当包管理，下载独立构建版&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv tool install&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;取码 → 打包 → 独立环境 → 接出命令&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uvx&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;同上但用完即弃&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="动手验证亲眼看看接线"&gt;动手验证：亲眼看看&amp;quot;接线&amp;quot;
+&lt;/h2&gt;&lt;p&gt;不信&amp;quot;安装只是建链接&amp;quot;？两条命令验证：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 任意项目里随便找一个已安装的包文件，记下它的 inode 号&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ls -i .venv/lib/python3.12/site-packages/requests/__version__.py
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 再去全局仓库找同一个文件，对比 inode&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;find ~/.cache/uv -name &lt;span class="s2"&gt;&amp;#34;__version__.py&amp;#34;&lt;/span&gt; -path &lt;span class="s2"&gt;&amp;#34;*requests*&amp;#34;&lt;/span&gt; -exec ls -i &lt;span class="o"&gt;{}&lt;/span&gt; &lt;span class="se"&gt;\;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;两边 inode 数字相同 = 磁盘上是同一份数据，&lt;code&gt;.venv&lt;/code&gt; 里真的只是一个入口标记。&lt;/p&gt;
+&lt;h2 id="深入方向"&gt;深入方向
+&lt;/h2&gt;&lt;p&gt;本文刻意停在&amp;quot;流程讲清楚&amp;quot;这一层。再往深处，有三个方向值得单独成文：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;依赖解析算法&lt;/strong&gt;：uv 用的是 PubGrub（和 Cargo、Dart 同款），核心思想是&amp;quot;冲突学习&amp;quot;——发现某两个版本不能共存就永久记住，同类错误不再重试&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;缓存目录结构&lt;/strong&gt;：&lt;code&gt;archive-v0&lt;/code&gt;、&lt;code&gt;git-v0&lt;/code&gt; 等分桶设计，以及硬链接失效的场景（跨磁盘、Docker overlayfs）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;解析器的并发模型&lt;/strong&gt;：解题线程和网络下载线程如何分工互不拖累&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.astral.sh/uv/" target="_blank" rel="noopener"
+ &gt;uv 官方文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.astral.sh/uv/reference/internals/resolver/" target="_blank" rel="noopener"
+ &gt;官方 Resolver 内部机制文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://noos.blog/posts/uv-how-it-works-under-the-hood/" target="_blank" rel="noopener"
+ &gt;How uv Works Under the Hood (noos.blog)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://nex3.medium.com/pubgrub-2fb6470504f" target="_blank" rel="noopener"
+ &gt;PubGrub 算法原理解释（Natalie Weizenbaum）&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>MySQL 的 RR 到底有没有解决幻读</title><link>/mysql-de-rr-dao-di-you-mei-you-jie-jue-huan-du/</link><pubDate>Mon, 15 Jun 2026 18:37:34 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/mysql-de-rr-dao-di-you-mei-you-jie-jue-huan-du/</guid><description>
  &lt;blockquote&gt;
  &lt;p&gt;本文由原作者归档自知乎，原文发布于 2026-06-15。原文链接：&lt;a class="link" href="https://zhuanlan.zhihu.com/p/2049918197281952379" target="_blank" rel="noopener"
  &gt;MySQL 的 RR 到底有没有解决幻读&lt;/a&gt;。&lt;/p&gt;

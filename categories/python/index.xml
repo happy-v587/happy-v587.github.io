@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on Happy</title><link>/categories/python/</link><description>Recent content in Python on Happy</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>code4happy@gmail.com (happy-v587)</managingEditor><webMaster>code4happy@gmail.com (happy-v587)</webMaster><lastBuildDate>Tue, 25 Aug 2026 21:14:42 +0800</lastBuildDate><atom:link href="/categories/python/index.xml" rel="self" type="application/rss+xml"/><item><title>uv 运行原理：从 init 到 tool install，它内部到底在做什么</title><link>/uv-yun-xing-yuan-li/</link><pubDate>Tue, 25 Aug 2026 21:14:42 +0800</pubDate><author>code4happy@gmail.com (happy-v587)</author><guid>/uv-yun-xing-yuan-li/</guid><description>&lt;h2 id="说明"&gt;说明
+&lt;/h2&gt;&lt;p&gt;uv 是 Astral（Ruff 背后的团队）用 Rust 写的 Python 包管理器，官方口号是 10-100 倍快于 pip。快只是结果，真正值得搞清楚的是：它内部到底怎么工作的。&lt;/p&gt;
+&lt;p&gt;这篇文章不讲功能清单，只回答一个问题：&lt;strong&gt;每敲一条命令，uv 在背后做了哪几步、为什么这么设计。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;先给结论：uv 所有命令都建立在两个基础设计上——&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;一个全局仓库&lt;/strong&gt;：所有下载过的包、构建产物、甚至 Python 解释器本体，全在你电脑上只存一份（&lt;code&gt;~/.cache/uv&lt;/code&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;链接代替拷贝&lt;/strong&gt;：任何环境要装包，不复制文件，只创建指向全局仓库的链接&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;记住这两点，下面每个命令的流程都能看懂。&lt;/p&gt;
+&lt;h2 id="uv-init创建项目"&gt;&lt;code&gt;uv init&lt;/code&gt;：创建项目
+&lt;/h2&gt;&lt;p&gt;敲下 &lt;code&gt;uv init my-project&lt;/code&gt;，它做四件事：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;生成一张&amp;quot;项目身份证&amp;quot;&lt;/strong&gt;：&lt;code&gt;pyproject.toml&lt;/code&gt;，里面写着项目叫什么、版本号、要求什么以上的 Python、依赖列表（初始为空）。以后所有工具都靠读这张卡片了解这个项目。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;钉住 Python 版本&lt;/strong&gt;：写一个 &lt;code&gt;.python-version&lt;/code&gt; 文件，比如 &lt;code&gt;3.12&lt;/code&gt;。这个项目里所有后续操作都用这个版本。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;搭好代码骨架&lt;/strong&gt;：建 &lt;code&gt;src/my_project/&lt;/code&gt; 目录和一个入口函数，并在身份证里登记&amp;quot;装好我之后，命令行里会有个叫 &lt;code&gt;my-project&lt;/code&gt; 的命令可以用&amp;quot;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;初始化 git&lt;/strong&gt;：顺手 &lt;code&gt;git init&lt;/code&gt; 并写好 &lt;code&gt;.gitignore&lt;/code&gt;。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;值得注意的一点：&lt;strong&gt;这时候还没有创建任何虚拟环境&lt;/strong&gt;。uv 是懒的——环境等到你第一次真正要装包或跑代码时才建，避免为可能永远不用的项目浪费磁盘。&lt;/p&gt;
+&lt;h2 id="uv-add-requests加依赖最核心的流程"&gt;&lt;code&gt;uv add requests&lt;/code&gt;：加依赖（最核心的流程）
+&lt;/h2&gt;&lt;p&gt;这一条命令背后是一条五步流水线：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第一步：先把名字记下来&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;立刻把 &lt;code&gt;requests&lt;/code&gt; 写进 &lt;code&gt;pyproject.toml&lt;/code&gt; 的依赖列表。此时还不知道该装哪个版本，先占个位。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第二步：算账&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;requests 自己还要依赖 certifi、urllib3 等一堆包，那些包又有各自的依赖。uv 把整棵依赖树上所有&amp;quot;我要这个范围、你不能超过那个版本&amp;quot;的条件收集齐，然后计算出一套&lt;strong&gt;所有包都满意、互相不打架&lt;/strong&gt;的精确版本。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;这一步是纯计算。如果条件本身矛盾（A 要 x&amp;gt;=2 而 B 要求 x&amp;lt;2），会直接报错并告诉你谁跟谁冲突&lt;/li&gt;
+&lt;li&gt;算法上有记忆能力：发现过&amp;quot;这两个版本不能共存&amp;quot;，下次遇到同样的组合直接跳过，不浪费时间重试&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;第三步：拿货&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;对每个定好版本的包，先查全局缓存：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;有 → 直接复用，一毫秒都不碰网络&lt;/li&gt;
+&lt;li&gt;没有 → 所有缺的包&lt;strong&gt;同时&lt;/strong&gt;发起下载，不是排队一个个来&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;第四步：记账&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;把结果写进 &lt;code&gt;uv.lock&lt;/code&gt; 锁文件：每个包的精确版本、下载地址、内容哈希值。这份记录覆盖&lt;strong&gt;所有操作系统&lt;/strong&gt;，同事在 Windows 上拿到同一个文件，装出来的版本和你一模一样。哈希值还有个副作用：下载时顺便校验文件没被篡改或损坏。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;第五步：接线&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如果 &lt;code&gt;.venv&lt;/code&gt; 还不存在，此刻创建一个。然后把所有包装进去——但不是拷贝文件，而是在环境里创建指向全局仓库的链接。&amp;ldquo;Installed 5 packages in 4ms&amp;rdquo; 说的就是这步：只是建了些目录项而已。&lt;/p&gt;
+&lt;p&gt;最后回头把第一步占位的名字补全成 &lt;code&gt;requests&amp;gt;=2.33.1&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id="为什么它快答案藏在四步里"&gt;为什么它快？答案藏在四步里
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;第二步并行下载 → 网络等待时间从&amp;quot;所有包加起来&amp;quot;变成&amp;quot;最慢的那一个&amp;quot;&lt;/li&gt;
+&lt;li&gt;第三步只存一份 → 磁盘不浪费，第二次装直接命中&lt;/li&gt;
+&lt;li&gt;第四步只建链接 → &amp;ldquo;安装&amp;quot;听起来很重，实际是个轻量操作&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="uv-sync让环境和账本对齐"&gt;&lt;code&gt;uv sync&lt;/code&gt;：让环境和账本对齐
+&lt;/h2&gt;&lt;p&gt;适用场景：刚 clone 了别人的项目，或者拉取了同事改过依赖的代码。&lt;/p&gt;
+&lt;p&gt;逻辑非常简单：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;读锁文件 &lt;code&gt;uv.lock&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;检查当前 &lt;code&gt;.venv&lt;/code&gt; 里实际装了什么&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;算差集&lt;/strong&gt;：缺的装上，多的删掉，版本不对的换掉&lt;/li&gt;
+&lt;li&gt;全部从缓存链接，几秒内完成&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;所以团队协作的固定动作是三连：&lt;code&gt;git pull&lt;/code&gt; → &lt;code&gt;uv sync&lt;/code&gt; → 干活。不需要知道对方到底加了什么包。&lt;/p&gt;
+&lt;h2 id="uv-run跑代码"&gt;&lt;code&gt;uv run&lt;/code&gt;：跑代码
+&lt;/h2&gt;&lt;p&gt;&lt;code&gt;uv run python main.py&lt;/code&gt; 表面是运行命令，实际前面多了一道安检：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;对比 &lt;code&gt;pyproject.toml&lt;/code&gt; 和 &lt;code&gt;uv.lock&lt;/code&gt; 是否被改动过&lt;/li&gt;
+&lt;li&gt;如果改过 → 先自动执行一次同步，保证环境是最新的&lt;/li&gt;
+&lt;li&gt;在项目的虚拟环境里、用项目钉住的那个 Python 执行你的命令&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;价值在于：&lt;strong&gt;你永远不会跑到一个过期或不一致的环境里&lt;/strong&gt;。传统流程中&amp;quot;忘了重新装依赖导致报错&amp;quot;这类事故，在这里结构上不可能发生。&lt;/p&gt;
+&lt;h2 id="uv-python-install-313安装-python-本体"&gt;&lt;code&gt;uv python install 3.13&lt;/code&gt;：安装 Python 本体
+&lt;/h2&gt;&lt;p&gt;uv 连 Python 解释器都当成普通包来管理：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;下载一份独立的 CPython 构建（官方编译好的、放在独立目录里的完整 Python）&lt;/li&gt;
+&lt;li&gt;存进自己的管理目录，和系统自带的 Python 互不干扰&lt;/li&gt;
+&lt;li&gt;之后 &lt;code&gt;uv python pin 3.13&lt;/code&gt; 就能让项目切换到它&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;意义：&amp;ldquo;机器上没有某个 Python 版本&amp;quot;这件事被消除了——缺什么版本，一条命令就有，不再需要 pyenv。&lt;/p&gt;
+&lt;h2 id="uv-tool-install安装命令行工具"&gt;&lt;code&gt;uv tool install&lt;/code&gt;：安装命令行工具
+&lt;/h2&gt;&lt;p&gt;针对 ruff、black 这类&amp;quot;装完是为了敲它的命令&amp;quot;的工具。以一条真实命令为例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;uv&lt;/span&gt; &lt;span class="k"&gt;tool&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;force&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;powercontext[cli,server] @ git+https://github.com/oceanbase/powercontext.git@master&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;六步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;获取源码&lt;/strong&gt;：clone 这个 git 仓库，把 &lt;code&gt;master&lt;/code&gt; 分支固定成一个具体的提交号。之后所有操作都基于这次快照，不会中途变卦。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;现场打包&lt;/strong&gt;：源码不能直接装。uv 读仓库里的构建配置，调起构建工具，把源码打成一个标准 wheel 包（wheel 就是 Python 生态约定的安装单位，本质是个规范布局的压缩包）。打好的包存进缓存，同一份代码下次不再重复打包。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;展开完整清单&lt;/strong&gt;：&lt;code&gt;[cli,server]&lt;/code&gt; 表示额外勾选两组可选功能，对应的附加依赖会被加入清单，一起参与第二步那样的算账。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;重建专属环境&lt;/strong&gt;：为这个工具单独建一个虚拟环境（已有旧的则整个删掉重建——&lt;code&gt;--force&lt;/code&gt; 就是允许这种覆盖）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;装入&lt;/strong&gt;：所有包从缓存链接进这个专属环境。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;接出命令&lt;/strong&gt;：读包元数据里声明的入口，把 &lt;code&gt;powercontext&lt;/code&gt; 命令的快捷方式放进 &lt;code&gt;~/.local/bin&lt;/code&gt;。因为这个目录在 PATH 里，你在任何位置都能直接敲这个命令。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;两个推论值得记住：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;每个工具住在自己独立的房子里&lt;/strong&gt;，ruff 依赖 A 库 9.0、black 依赖 A 库 10.0 也相安无事&lt;/li&gt;
+&lt;li&gt;装完后命令指向的是&lt;strong&gt;当时的代码快照&lt;/strong&gt;。上游更新后重跑安装即可刷新；如果缓存没生效，用 &lt;code&gt;--reinstall&lt;/code&gt; 强制重来&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="uvx-ruff-check临时用一次"&gt;&lt;code&gt;uvx ruff check&lt;/code&gt;：临时用一次
+&lt;/h2&gt;&lt;p&gt;上面 &lt;code&gt;tool install&lt;/code&gt; 是&amp;quot;长期雇佣&amp;rdquo;，&lt;code&gt;uvx&lt;/code&gt; 是&amp;quot;日结工&amp;rdquo;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;环境不放在工具目录，而是丢进缓存里，属于临时工位&lt;/li&gt;
+&lt;li&gt;用完即走，不在系统里留全局命令&lt;/li&gt;
+&lt;li&gt;第二次跑同一个工具时，临时环境还在缓存里，直接复用，依然很快&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;适合偶尔用一次的工具，不值得为它在系统里常驻一个环境。&lt;/p&gt;
+&lt;h2 id="总览"&gt;总览
+&lt;/h2&gt;&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;命令&lt;/th&gt;
+					&lt;th&gt;一句话机制&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv init&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;写身份证 + 钉 Python 版本 + 搭骨架，环境先不建&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv add&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;记名字 → 算账 → 拿货 → 记账 → 接线&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv sync&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;环境和锁文件求差集，缺啥补啥&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv run&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;先安检（环境是否最新），再在正确环境里执行&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv python install&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;把解释器当包管理，下载独立构建版&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uv tool install&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;取码 → 打包 → 独立环境 → 接出命令&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;code&gt;uvx&lt;/code&gt;&lt;/td&gt;
+					&lt;td&gt;同上但用完即弃&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id="动手验证亲眼看看接线"&gt;动手验证：亲眼看看&amp;quot;接线&amp;quot;
+&lt;/h2&gt;&lt;p&gt;不信&amp;quot;安装只是建链接&amp;quot;？两条命令验证：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 任意项目里随便找一个已安装的包文件，记下它的 inode 号&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ls -i .venv/lib/python3.12/site-packages/requests/__version__.py
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 再去全局仓库找同一个文件，对比 inode&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;find ~/.cache/uv -name &lt;span class="s2"&gt;&amp;#34;__version__.py&amp;#34;&lt;/span&gt; -path &lt;span class="s2"&gt;&amp;#34;*requests*&amp;#34;&lt;/span&gt; -exec ls -i &lt;span class="o"&gt;{}&lt;/span&gt; &lt;span class="se"&gt;\;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;两边 inode 数字相同 = 磁盘上是同一份数据，&lt;code&gt;.venv&lt;/code&gt; 里真的只是一个入口标记。&lt;/p&gt;
+&lt;h2 id="深入方向"&gt;深入方向
+&lt;/h2&gt;&lt;p&gt;本文刻意停在&amp;quot;流程讲清楚&amp;quot;这一层。再往深处，有三个方向值得单独成文：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;依赖解析算法&lt;/strong&gt;：uv 用的是 PubGrub（和 Cargo、Dart 同款），核心思想是&amp;quot;冲突学习&amp;quot;——发现某两个版本不能共存就永久记住，同类错误不再重试&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;缓存目录结构&lt;/strong&gt;：&lt;code&gt;archive-v0&lt;/code&gt;、&lt;code&gt;git-v0&lt;/code&gt; 等分桶设计，以及硬链接失效的场景（跨磁盘、Docker overlayfs）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;解析器的并发模型&lt;/strong&gt;：解题线程和网络下载线程如何分工互不拖累&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.astral.sh/uv/" target="_blank" rel="noopener"
+ &gt;uv 官方文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://docs.astral.sh/uv/reference/internals/resolver/" target="_blank" rel="noopener"
+ &gt;官方 Resolver 内部机制文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://noos.blog/posts/uv-how-it-works-under-the-hood/" target="_blank" rel="noopener"
+ &gt;How uv Works Under the Hood (noos.blog)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="link" href="https://nex3.medium.com/pubgrub-2fb6470504f" target="_blank" rel="noopener"
+ &gt;PubGrub 算法原理解释（Natalie Weizenbaum）&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>
